@@ -10,7 +10,7 @@
 #import "MLLabel+Override.h"
 #import "MLTextAttachment.h"
 
-#define kExpressionLineHeightMultiple 1.5f
+#define kExpressionLineHeightMultiple 1.4f
 
 //这个是表情的正则对应关系和正则的管理器，可以减少项目所占用内存
 @interface MLExpressionLabelExpressionRecordManager : NSObject
@@ -200,5 +200,9 @@
     [self setAttributedText:[self expressionAttributedStringWithAttributedString:expressionAttrText]];
 }
 
+#pragma mark - UIResponderStandardEditActions
+- (void)copy:(__unused id)sender {
+    [[UIPasteboard generalPasteboard] setString:self.expressionText];
+}
 
 @end

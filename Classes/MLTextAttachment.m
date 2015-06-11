@@ -58,8 +58,14 @@
         CGFloat width = self.width;
         CGFloat height = self.height;
         
+        // 找到其是否有设置字体，如果有，就根据字体的descender调整下位置,以及lineHeight调整大小
+        UIFont *font = [textContainer.layoutManager.textStorage attribute:NSFontAttributeName
+                                                                  atIndex:charIndex
+                                                           effectiveRange:nil];
+        CGFloat baseLineHeight = (font?font.lineHeight:lineFrag.size.height);
+        
         if (self.lineHeightMultiple>0) {
-            width = height = lineFrag.size.height*self.lineHeightMultiple;
+            width = height = baseLineHeight*self.lineHeightMultiple;
         }else{
             if (width==0&&height==0) {
                 width = height = lineFrag.size.height;
@@ -70,13 +76,8 @@
             }
         }
         
-        // 找到其是否有设置字体，如果有，就根据字体的descender调整下位置
-        UIFont *font = [textContainer.layoutManager.textStorage attribute:NSFontAttributeName
-                                                                  atIndex:charIndex
-                                                           effectiveRange:nil];
-        
         CGFloat y = font.descender;
-        y -= (height-lineFrag.size.height)/2;
+        y -= (height-baseLineHeight)/2;
         
         return CGRectMake(0, y, width, height);
         

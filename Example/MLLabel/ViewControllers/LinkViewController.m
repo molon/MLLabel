@@ -44,7 +44,7 @@
     self.label.numberOfLines = 0;
     self.label.textAlignment = NSTextAlignmentCenter;
     self.label.textInsets = UIEdgeInsetsMake(5, 5, 5, 5);
-    self.label.text = @"人生若只如初见，http://g.cn何事秋风悲画扇。http://baidu.com等闲变却故人心，dudl@qq.com却道故人心易变。13612341234骊山语罢清宵半，泪雨零铃终不怨。#何如 薄幸@锦衣郎，比翼连枝当日愿。";
+    self.label.text = @"人生若只如初见，http://g.cn何事秋风悲http://baidu.com画扇。等闲变却故人心，dudl@qq.com却道故人心易变。13612341234骊山语罢清宵半，泪雨零铃终不怨。#何如 薄幸@锦衣郎，比翼连枝当日愿。";
     LABEL.allowLineBreakInsideLinks = NO;
     LABEL.linkTextAttributes = nil;
     LABEL.activeLinkTextAttributes = nil;

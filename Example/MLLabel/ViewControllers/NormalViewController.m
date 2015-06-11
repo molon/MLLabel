@@ -40,7 +40,6 @@
 {
     
 #warning 有换行符需要修正,显示错误，fit大小正确
-    
     self.label.textColor = [UIColor redColor];
     self.label.font = [UIFont systemFontOfSize:14.0f];
     self.label.numberOfLines = 1;

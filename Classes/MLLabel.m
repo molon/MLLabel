@@ -625,4 +625,20 @@ static inline NSArray * kStylePropertyNames() {
     [self setNeedsDisplay];
 }
 
+#pragma mark - UIResponder
+- (BOOL)canBecomeFirstResponder {
+    return YES;
+}
+
+- (BOOL)canPerformAction:(SEL)action
+              withSender:(__unused id)sender
+{
+    return (action == @selector(copy:));
+}
+
+#pragma mark - UIResponderStandardEditActions
+- (void)copy:(__unused id)sender {
+    [[UIPasteboard generalPasteboard] setString:self.text];
+}
+
 @end
