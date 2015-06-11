@@ -172,10 +172,10 @@
 				36C77C2C1B2A23B100BD58B7 /* NormalViewController.m */,
 				36C77C2E1B2A23C300BD58B7 /* LinkViewController.h */,
 				36C77C2F1B2A23C300BD58B7 /* LinkViewController.m */,
-				36C77C341B2A23E100BD58B7 /* HtmlViewController.h */,
-				36C77C351B2A23E100BD58B7 /* HtmlViewController.m */,
 				36C77C371B2A23EA00BD58B7 /* ExpressionViewController.h */,
 				36C77C381B2A23EA00BD58B7 /* ExpressionViewController.m */,
+				36C77C341B2A23E100BD58B7 /* HtmlViewController.h */,
+				36C77C351B2A23E100BD58B7 /* HtmlViewController.m */,
 				36C77C3A1B2A240800BD58B7 /* ListViewController.h */,
 				36C77C3B1B2A240800BD58B7 /* ListViewController.m */,
 			);
