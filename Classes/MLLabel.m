@@ -401,7 +401,7 @@ static inline NSArray * kStylePropertyNames() {
             UIFont *font = (UIFont *)value;
             if (font&&[font isKindOfClass:[UIFont class]]) {
                 NSString *fontName = font.fontName;
-                CGFloat newSize = floor(font.pointSize*scaleFactor);
+                CGFloat newSize = font.pointSize*scaleFactor;
                 if (newSize<ADJUST_MIN_FONT_SIZE) { //字体的极限
                     mustReturnYES = YES;
                 }

@@ -20,6 +20,8 @@
 		36C77C361B2A23E100BD58B7 /* HtmlViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 36C77C351B2A23E100BD58B7 /* HtmlViewController.m */; };
 		36C77C391B2A23EA00BD58B7 /* ExpressionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 36C77C381B2A23EA00BD58B7 /* ExpressionViewController.m */; };
 		36C77C3C1B2A240800BD58B7 /* ListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 36C77C3B1B2A240800BD58B7 /* ListViewController.m */; };
+		36D9A5BE1B2A2E0900C524A9 /* BaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 36D9A5BD1B2A2E0900C524A9 /* BaseViewController.m */; };
+		36D9A5C21B2A303E00C524A9 /* UIView+Convenience.m in Sources */ = {isa = PBXBuildFile; fileRef = 36D9A5C11B2A303E00C524A9 /* UIView+Convenience.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +59,10 @@
 		36C77C381B2A23EA00BD58B7 /* ExpressionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExpressionViewController.m; sourceTree = "<group>"; };
 		36C77C3A1B2A240800BD58B7 /* ListViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListViewController.h; sourceTree = "<group>"; };
 		36C77C3B1B2A240800BD58B7 /* ListViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListViewController.m; sourceTree = "<group>"; };
+		36D9A5BC1B2A2E0900C524A9 /* BaseViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BaseViewController.h; path = ../BaseViewController.h; sourceTree = "<group>"; };
+		36D9A5BD1B2A2E0900C524A9 /* BaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BaseViewController.m; path = ../BaseViewController.m; sourceTree = "<group>"; };
+		36D9A5C01B2A303E00C524A9 /* UIView+Convenience.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Convenience.h"; sourceTree = "<group>"; };
+		36D9A5C11B2A303E00C524A9 /* UIView+Convenience.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Convenience.m"; sourceTree = "<group>"; };
 		CCD8AB091A208F04A73124F3 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		D62DD6CBA6CB553CF784B7DE /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9D5A4BA8166F680968BF2FA /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
@@ -113,6 +119,8 @@
 		36C77BFD1B2A22BA00BD58B7 /* MLLabel */ = {
 			isa = PBXGroup;
 			children = (
+				36D9A5C01B2A303E00C524A9 /* UIView+Convenience.h */,
+				36D9A5C11B2A303E00C524A9 /* UIView+Convenience.m */,
 				36C77C2A1B2A237D00BD58B7 /* ViewControllers */,
 				36C77C021B2A22BA00BD58B7 /* AppDelegate.h */,
 				36C77C031B2A22BA00BD58B7 /* AppDelegate.m */,
@@ -154,6 +162,7 @@
 		36C77C2A1B2A237D00BD58B7 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				36D9A5BF1B2A2E1300C524A9 /* Base */,
 				36C77C2B1B2A23B100BD58B7 /* NormalViewController.h */,
 				36C77C2C1B2A23B100BD58B7 /* NormalViewController.m */,
 				36C77C2E1B2A23C300BD58B7 /* LinkViewController.h */,
@@ -168,6 +177,15 @@
 				36C77C3B1B2A240800BD58B7 /* ListViewController.m */,
 			);
 			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		36D9A5BF1B2A2E1300C524A9 /* Base */ = {
+			isa = PBXGroup;
+			children = (
+				36D9A5BC1B2A2E0900C524A9 /* BaseViewController.h */,
+				36D9A5BD1B2A2E0900C524A9 /* BaseViewController.m */,
+			);
+			name = Base;
 			sourceTree = "<group>";
 		};
 		6814EC81D35E27A3034C9865 /* Frameworks */ = {
@@ -313,6 +331,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				36C77C331B2A23D200BD58B7 /* AttributedViewController.m in Sources */,
+				36D9A5C21B2A303E00C524A9 /* UIView+Convenience.m in Sources */,
+				36D9A5BE1B2A2E0900C524A9 /* BaseViewController.m in Sources */,
 				36C77C301B2A23C300BD58B7 /* LinkViewController.m in Sources */,
 				36C77C3C1B2A240800BD58B7 /* ListViewController.m in Sources */,
 				36C77C291B2A235B00BD58B7 /* IndexTableViewController.m in Sources */,

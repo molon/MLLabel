@@ -6,8 +6,8 @@
 //  Copyright (c) 2015年 molon. All rights reserved.
 //
 
-#import <UIKit/UIKit.h>
+#import "BaseViewController.h"
 
-@interface LinkViewController : UIViewController
+@interface LinkViewController : BaseViewController
 
 @end
