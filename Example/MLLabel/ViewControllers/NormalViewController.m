@@ -10,9 +10,6 @@
 
 @interface NormalViewController ()
 
-@property (nonatomic, strong) MLLabel *label;
-@property (nonatomic, strong) UIButton *button;
-
 @end
 
 @implementation NormalViewController
@@ -20,15 +17,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    
-    [self.view addSubview:self.button];
-    [self.view addSubview:self.label];
-    
-    //这里直接写死吧，demo而已
-    self.button.frame = CGRectMake((self.view.frameWidth-150.0f)/2, 64.0f+10.0f, 150.0f, 40.0f);
-    self.label.frame = CGRectMake(10.0f, self.button.frameBottom+20.0f, self.view.frameWidth-10.0f*2, 100.0f);
-    
-    [self change];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -36,40 +24,20 @@
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark - getter
-- (MLLabel *)label
+
+#pragma mark - override
+- (Class)lableClass
 {
-    if (!_label) {
-        _label = [MLLabel new];
-        _label.backgroundColor = [UIColor colorWithWhite:0.920 alpha:1.000];
-    }
-    return _label;
+    return [MLLabel class];
 }
 
-- (UIButton *)button
+- (NSInteger)resultCount
 {
-    if (!_button) {
-        UIButton *button = [[UIButton alloc]init];
-        [button setTitle:@"Change" forState:UIControlStateNormal];
-        [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        button.titleLabel.font = [UIFont systemFontOfSize:15.0f];
-        [button addTarget:self action:@selector(change) forControlEvents:UIControlEventTouchUpInside];
-        
-        button.backgroundColor = [UIColor darkGrayColor];
-        
-        _button = button;
-    }
-    return _button;
+    return 4;
 }
 
-#pragma mark - event
-- (void)change
+- (void)changeToResult:(int)result
 {
-    static int i=0;
-    
-    int result = i%3;
-    
-    [self.button setTitle:[NSString stringWithFormat:@"Change(Now:%d)",result] forState:UIControlStateNormal];
     
 #warning 有换行符需要修正,显示错误，fit大小正确
     
@@ -78,8 +46,9 @@
     self.label.numberOfLines = 1;
     self.label.textAlignment = NSTextAlignmentCenter;
     self.label.adjustsFontSizeToFitWidth = YES;
-//    self.label.textInsets = UIEdgeInsetsZero;
+    self.label.textInsets = UIEdgeInsetsZero;
     self.label.text = @"人生若只如初见，何事秋风悲画扇。等闲变却故人心，却道故人心易变。骊山语罢清宵半，泪雨零铃终不怨。何如薄幸锦衣郎，比翼连枝当日愿。";
+    [self.label setDoBeforeDrawingTextBlock:nil];
     
     if (result==0) {
     }else if (result==1) {
@@ -87,21 +56,31 @@
         self.label.font = [UIFont systemFontOfSize:16.0f];
         self.label.numberOfLines = 2;
         self.label.adjustsFontSizeToFitWidth = YES;
-//        self.label.textInsets = UIEdgeInsetsMake(5, 5, 5, 5);
+        self.label.textInsets = UIEdgeInsetsMake(5, 5, 5, 5);
     }else if (result==2) {
         self.label.textColor = [UIColor blueColor];
         self.label.numberOfLines = 0;
         self.label.textAlignment = NSTextAlignmentLeft;
-//        self.label.textInsets = UIEdgeInsetsMake(20, 5, 5, 5);
+        self.label.textInsets = UIEdgeInsetsMake(20, 5, 5, 5);
         self.label.adjustsFontSizeToFitWidth = NO;
+    }else if (result==3){
+        //测试绘制回调
+        self.label.numberOfLines = 0;
+        self.label.textAlignment = NSTextAlignmentLeft;
+        self.label.textInsets = UIEdgeInsetsMake(0, 10, 0, 5);
+        [self.label setDoBeforeDrawingTextBlock:^(CGRect rect, CGPoint beginOffset, CGSize drawSize) {
+            CGContextRef ctx = UIGraphicsGetCurrentContext();
+            if (!ctx) return;
+            
+            [[UIColor darkGrayColor] setFill];
+            
+            CGContextFillRect(ctx, CGRectMake(beginOffset.x-10.0f, beginOffset.y, 5.0f, drawSize.height));
+        }];
     }
     
     if (result!=0) {
         self.label.frameWidth = self.view.frameWidth-10.0f*2;
         [self.label sizeToFit];
     }
-    
-    i++;
 }
-
 @end

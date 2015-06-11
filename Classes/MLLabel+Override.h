@@ -27,4 +27,7 @@
 //获取绘制起点
 - (CGPoint)textOffsetWithTextSize:(CGSize)textSize;
 
+//可以完全重绘当前label
+- (void)reSetText;
+
 @end

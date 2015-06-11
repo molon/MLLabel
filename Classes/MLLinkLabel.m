@@ -89,6 +89,40 @@ REGULAREXPRESSION(HashtagRegularExpression, @"#([\\u4e00-\\u9fa5\\w\\-]+)")
     }
     
     [self resetSuperText];
+    
+    [CATransaction flush];
+}
+
+- (void)setAllowLineBreakInsideLinks:(BOOL)allowLineBreakInsideLinks
+{
+    if (allowLineBreakInsideLinks==_allowLineBreakInsideLinks) return;
+    
+    _allowLineBreakInsideLinks = allowLineBreakInsideLinks;
+    [self resetSuperText];
+}
+
+- (void)setLinkTextAttributes:(NSDictionary *)linkTextAttributes
+{
+    _linkTextAttributes = linkTextAttributes;
+    [self resetSuperText];
+}
+
+- (void)setActiveLinkTextAttributes:(NSDictionary *)activeLinkTextAttributes
+{
+    _activeLinkTextAttributes = activeLinkTextAttributes;
+    [self resetSuperText];
+}
+
+- (void)setDataDetectorTypes:(MLDataDetectorTypes)dataDetectorTypes
+{
+    _dataDetectorTypes = dataDetectorTypes;
+    [self reSetText];
+}
+
+- (void)setDataDetectorTypesOfAttributedLinkValue:(MLDataDetectorTypes)dataDetectorTypesOfAttributedLinkValue
+{
+    _dataDetectorTypesOfAttributedLinkValue = dataDetectorTypesOfAttributedLinkValue;
+    [self reSetText];
 }
 
 #pragma mark - helper
@@ -100,8 +134,6 @@ REGULAREXPRESSION(HashtagRegularExpression, @"#([\\u4e00-\\u9fa5\\w\\-]+)")
     }else{
         [super setAttributedText:self.lastAttributedText];
     }
-    
-    [CATransaction flush];
 }
 
 #pragma mark - override
@@ -115,10 +147,7 @@ REGULAREXPRESSION(HashtagRegularExpression, @"#([\\u4e00-\\u9fa5\\w\\-]+)")
     //默认都检测
     self.dataDetectorTypes = MLDataDetectorTypeAll;
     self.dataDetectorTypesOfAttributedLinkValue = MLDataDetectorTypeNone;
-    self.dontAllowLineBreakInsideLinks = NO;
-    
-    self.linkTextAttributes = @{NSForegroundColorAttributeName:kDefaultLinkColor};
-    self.activeLinkTextAttributes = @{NSForegroundColorAttributeName:kDefaultLinkColor,NSBackgroundColorAttributeName:kDefaultActiveLinkBackgroundColor};
+    self.allowLineBreakInsideLinks = NO;
     
     self.longPressGestureRecognizer = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(longPressGestureDidFire:)];
     self.longPressGestureRecognizer.delegate = self;
@@ -152,8 +181,14 @@ REGULAREXPRESSION(HashtagRegularExpression, @"#([\\u4e00-\\u9fa5\\w\\-]+)")
         NSDictionary *attributes = nil;
         if ([link isEqual:self.activeLink]) {
             attributes = self.activeLink.activeLinkTextAttributes?self.activeLink.activeLinkTextAttributes:self.activeLinkTextAttributes;
+            if (!attributes) {
+                attributes = @{NSForegroundColorAttributeName:kDefaultLinkColor,NSBackgroundColorAttributeName:kDefaultActiveLinkBackgroundColor};
+            }
         }else{
             attributes = self.activeLink.linkTextAttributes?self.activeLink.linkTextAttributes:self.linkTextAttributes;
+            if (!attributes) {
+                attributes = @{NSForegroundColorAttributeName:kDefaultLinkColor};
+            }
         }
         
         //默认的链接样式不是我们想要的，去除它
@@ -432,7 +467,7 @@ static inline NSArray * kAllRegexps() {
 #pragma mark - 布局相关
 -(BOOL)layoutManager:(NSLayoutManager *)layoutManager shouldBreakLineByWordBeforeCharacterAtIndex:(NSUInteger)charIndex
 {
-    if (!self.dontAllowLineBreakInsideLinks) {
+    if (self.allowLineBreakInsideLinks) {
         return YES;
     }
     

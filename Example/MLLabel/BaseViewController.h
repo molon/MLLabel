@@ -12,7 +12,19 @@
 #import <MLLabel/MLExpressionLabel.h>
 #import <MLTextAttachment.h>
 #import "UIView+Convenience.h"
+#import "MolonDebug.h"
+
+#define SHOW_SIMPLE_TIPS(m) [[[UIAlertView alloc] initWithTitle:@"" message:(m) delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil]show];
 
 @interface BaseViewController : UIViewController
+
+@property (nonatomic, strong) MLLabel *label;
+@property (nonatomic, strong) UIButton *button;
+
+
+//for override
+- (Class)lableClass;
+- (NSInteger)resultCount;
+- (void)changeToResult:(int)result;
 
 @end

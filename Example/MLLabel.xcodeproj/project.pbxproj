@@ -63,6 +63,7 @@
 		36D9A5BD1B2A2E0900C524A9 /* BaseViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BaseViewController.m; path = ../BaseViewController.m; sourceTree = "<group>"; };
 		36D9A5C01B2A303E00C524A9 /* UIView+Convenience.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Convenience.h"; sourceTree = "<group>"; };
 		36D9A5C11B2A303E00C524A9 /* UIView+Convenience.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Convenience.m"; sourceTree = "<group>"; };
+		36D9A5C31B2A47EE00C524A9 /* MolonDebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MolonDebug.h; sourceTree = "<group>"; };
 		CCD8AB091A208F04A73124F3 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		D62DD6CBA6CB553CF784B7DE /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9D5A4BA8166F680968BF2FA /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
@@ -119,6 +120,7 @@
 		36C77BFD1B2A22BA00BD58B7 /* MLLabel */ = {
 			isa = PBXGroup;
 			children = (
+				36D9A5C31B2A47EE00C524A9 /* MolonDebug.h */,
 				36D9A5C01B2A303E00C524A9 /* UIView+Convenience.h */,
 				36D9A5C11B2A303E00C524A9 /* UIView+Convenience.m */,
 				36C77C2A1B2A237D00BD58B7 /* ViewControllers */,

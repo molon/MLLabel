@@ -59,8 +59,8 @@ typedef NS_ENUM(NSUInteger, MLLinkType) {
 @property (nonatomic, strong) NSDictionary *linkTextAttributes;
 @property (nonatomic, strong) NSDictionary *activeLinkTextAttributes;
 
-//是否不允许在link内line break，默认为NO，即为允许，这个玩意设置为YES，之后链接会尽量的不换行
-@property (nonatomic, assign) BOOL dontAllowLineBreakInsideLinks;
+//是否允许在link内line break，默认为NO，即为不允许，这样的话链接会尽量的不换行
+@property (nonatomic, assign) BOOL allowLineBreakInsideLinks;
 
 @property (nonatomic, copy) void(^didClickLinkBlock)(MLLink *link,NSString *linkText,MLLinkLabel *label);
 @property (nonatomic, copy) void(^didLongPressLinkBlock)(MLLink *link,NSString *linkText,MLLinkLabel *label);
