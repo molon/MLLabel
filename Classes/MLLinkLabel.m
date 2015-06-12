@@ -32,9 +32,6 @@ REGULAREXPRESSION(EmailRegularExpression, @"[A-Z0-9a-z\\._%+-]+@([A-Za-z0-9-]+\\
 REGULAREXPRESSION(UserHandleRegularExpression, @"@[\\u4e00-\\u9fa5\\w\\-]+")
 REGULAREXPRESSION(HashtagRegularExpression, @"#([\\u4e00-\\u9fa5\\w\\-]+)")
 
-#define kDefaultLinkColor [UIColor colorWithRed:0.061 green:0.515 blue:0.862 alpha:1.000]
-#define kDefaultActiveLinkBackgroundColor [UIColor colorWithWhite:0.720 alpha:1.000]
-
 @interface MLLink()
 
 @property (nonatomic, assign) MLLinkType linkType;
@@ -182,12 +179,12 @@ REGULAREXPRESSION(HashtagRegularExpression, @"#([\\u4e00-\\u9fa5\\w\\-]+)")
         if ([link isEqual:self.activeLink]) {
             attributes = self.activeLink.activeLinkTextAttributes?self.activeLink.activeLinkTextAttributes:self.activeLinkTextAttributes;
             if (!attributes) {
-                attributes = @{NSForegroundColorAttributeName:kDefaultLinkColor,NSBackgroundColorAttributeName:kDefaultActiveLinkBackgroundColor};
+                attributes = @{NSForegroundColorAttributeName:kDefaultLinkColorForMLLinkLabel,NSBackgroundColorAttributeName:kDefaultActiveLinkBackgroundColorForMLLinkLabel};
             }
         }else{
             attributes = self.activeLink.linkTextAttributes?self.activeLink.linkTextAttributes:self.linkTextAttributes;
             if (!attributes) {
-                attributes = @{NSForegroundColorAttributeName:kDefaultLinkColor};
+                attributes = @{NSForegroundColorAttributeName:kDefaultLinkColorForMLLinkLabel};
             }
         }
         

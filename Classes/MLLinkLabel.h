@@ -38,6 +38,8 @@ typedef NS_ENUM(NSUInteger, MLLinkType) {
     MLLinkTypeOther        = 31,          //这个一般是和MLDataDetectorTypeAttributedLink对应的，但是也可以自己随意添加啦，不过是一个标识而已，至于为什么31，随便定的，预留上面空间以添加新的个性化
 };
 
+#define kDefaultLinkColorForMLLinkLabel [UIColor colorWithRed:0.061 green:0.515 blue:0.862 alpha:1.000]
+#define kDefaultActiveLinkBackgroundColorForMLLinkLabel [UIColor colorWithWhite:0.720 alpha:1.000]
 
 @class MLLink,MLLinkLabel;
 
