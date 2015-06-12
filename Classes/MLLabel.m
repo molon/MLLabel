@@ -10,6 +10,7 @@
 #import "NSMutableAttributedString+MLLabel.h"
 #import "MLLabelLayoutManager.h"
 #import "MLLabelTextStorage.h"
+#import "NSString+MLLabel.h"
 
 #define kAdjustFontSizeEveryScalingFactor (M_E / M_PI)
 //总得有个极限
@@ -426,19 +427,20 @@ static inline NSArray * kStylePropertyNames() {
         NSInteger lineCount = 0;
         currentTextSize = [self textRectForBounds:CGRectMake(0, 0, CGRectGetWidth(bounds), MLFLOAT_MAX) limitedToNumberOfLines:0 ignoreCurrentTextSotrage:NO lineCount:&lineCount].size;
         //如果求行数大于设置行数，也不认为塞满了
-        if (lineCount>numberOfLines) {
+        
+        //这里需要注意，如果当前字符串的换行符次数本身就大于numberOfLine，那就是大了多少就减去多少.
+        NSInteger stringLineCount = [_textStorage.string lineCount];
+        NSInteger offsetLineCount = MAX(0, stringLineCount-numberOfLines);
+        
+        if (lineCount>numberOfLines+offsetLineCount) {
             return NO;
         }
     }else{
         currentTextSize = [self textRectForBounds:CGRectMake(0, 0, CGRectGetWidth(bounds), MLFLOAT_MAX) limitedToNumberOfLines:0 ignoreCurrentTextSotrage:NO lineCount:NULL].size;
     }
     
-    //宽度已经富余就认作OK。
-    if (currentTextSize.width<CGRectGetWidth(bounds)) {
-        return YES;
-    }
-    //高度已经足够就认作OK
-    if (currentTextSize.height<=CGRectGetHeight(bounds)) {
+    //大小已经足够就认作OK
+    if (currentTextSize.width<=CGRectGetWidth(bounds)&&currentTextSize.height<=CGRectGetHeight(bounds)) {
         return YES;
     }
     

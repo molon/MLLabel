@@ -22,7 +22,7 @@
 		36D9A5BE1B2A2E0900C524A9 /* BaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 36D9A5BD1B2A2E0900C524A9 /* BaseViewController.m */; };
 		36D9A5C21B2A303E00C524A9 /* UIView+Convenience.m in Sources */ = {isa = PBXBuildFile; fileRef = 36D9A5C11B2A303E00C524A9 /* UIView+Convenience.m */; };
 		36D9A5C61B2A4B6F00C524A9 /* Expression.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 36D9A5C41B2A4B6F00C524A9 /* Expression.bundle */; };
-		36D9A5C71B2A4B6F00C524A9 /* expression.plist in Resources */ = {isa = PBXBuildFile; fileRef = 36D9A5C51B2A4B6F00C524A9 /* expression.plist */; };
+		36D9A5C71B2A4B6F00C524A9 /* Expression.plist in Resources */ = {isa = PBXBuildFile; fileRef = 36D9A5C51B2A4B6F00C524A9 /* Expression.plist */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,7 +64,7 @@
 		36D9A5C11B2A303E00C524A9 /* UIView+Convenience.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Convenience.m"; sourceTree = "<group>"; };
 		36D9A5C31B2A47EE00C524A9 /* MolonDebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MolonDebug.h; sourceTree = "<group>"; };
 		36D9A5C41B2A4B6F00C524A9 /* Expression.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Expression.bundle; sourceTree = "<group>"; };
-		36D9A5C51B2A4B6F00C524A9 /* expression.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = expression.plist; sourceTree = "<group>"; };
+		36D9A5C51B2A4B6F00C524A9 /* Expression.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expression.plist; sourceTree = "<group>"; };
 		CCD8AB091A208F04A73124F3 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		D62DD6CBA6CB553CF784B7DE /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9D5A4BA8166F680968BF2FA /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
@@ -125,7 +125,7 @@
 				36D9A5C01B2A303E00C524A9 /* UIView+Convenience.h */,
 				36D9A5C11B2A303E00C524A9 /* UIView+Convenience.m */,
 				36D9A5C41B2A4B6F00C524A9 /* Expression.bundle */,
-				36D9A5C51B2A4B6F00C524A9 /* expression.plist */,
+				36D9A5C51B2A4B6F00C524A9 /* Expression.plist */,
 				36C77C2A1B2A237D00BD58B7 /* ViewControllers */,
 				36C77C021B2A22BA00BD58B7 /* AppDelegate.h */,
 				36C77C031B2A22BA00BD58B7 /* AppDelegate.m */,
@@ -283,7 +283,7 @@
 			files = (
 				36C77C0F1B2A22BA00BD58B7 /* LaunchScreen.xib in Resources */,
 				36D9A5C61B2A4B6F00C524A9 /* Expression.bundle in Resources */,
-				36D9A5C71B2A4B6F00C524A9 /* expression.plist in Resources */,
+				36D9A5C71B2A4B6F00C524A9 /* Expression.plist in Resources */,
 				36C77C0C1B2A22BA00BD58B7 /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
