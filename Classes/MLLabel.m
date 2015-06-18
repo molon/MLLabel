@@ -311,10 +311,14 @@ static inline NSArray * kStylePropertyNames() {
         [layoutManager enumerateLineFragmentsForGlyphRange:glyphRange usingBlock:^(CGRect rect, CGRect usedRect, NSTextContainer *textContainer, NSRange glyphRange, BOOL *stop) {
             (*lineCount)++;
         }];
+        //在最后字符为换行符的情况下，实际绘制出来的是会多那个一行，这里作为AppleBUG修正
+        if ([textStorage.string isNewlineCharacterAtEnd]) {
+            (*lineCount)++;
+        }
     }
     //执行这个之前必须执行glyphRangeForTextContainer
     CGRect textBounds = [layoutManager usedRectForTextContainer:textContainer];
-
+    
     textBounds.size.width = MIN(ceilf(textBounds.size.width), newTextContainerSize.width);
     textBounds.size.height = MIN(ceilf(textBounds.size.height), newTextContainerSize.height);
     textBounds.origin = bounds.origin;
@@ -325,7 +329,7 @@ static inline NSArray * kStylePropertyNames() {
 }
 
 #pragma mark - draw
-- (BOOL)adjustsCurrentFontSizeToFitWidthWithScaleFactor:(CGFloat)scaleFactor numberOfLines:(NSInteger)numberOfLines originalAttributedText:(NSAttributedString*)originalAttributedText bounds:(CGRect)bounds
+- (BOOL)adjustsCurrentFontSizeToFitWidthWithScaleFactor:(CGFloat)scaleFactor numberOfLines:(NSInteger)numberOfLines originalAttributedText:(NSAttributedString*)originalAttributedText bounds:(CGRect)bounds resultAttributedString:(NSAttributedString**)resultAttributedString
 {
     __block BOOL mustReturnYES = NO;
     if (self.minimumScaleFactor > scaleFactor) {
@@ -355,10 +359,11 @@ static inline NSArray * kStylePropertyNames() {
         }];
     }
     
-    [_textStorage setAttributedString:attrStr];
-    
     //返回是否需要继续调整字体大小
     if (mustReturnYES) {
+        if (resultAttributedString) {
+            (*resultAttributedString) = attrStr;
+        }
         return YES;
     }
     
@@ -366,22 +371,20 @@ static inline NSArray * kStylePropertyNames() {
     CGSize currentTextSize = CGSizeZero;
     if (numberOfLines>0) {
         NSInteger lineCount = 0;
-        currentTextSize = [self textRectForBounds:CGRectMake(0, 0, CGRectGetWidth(bounds), MLFLOAT_MAX) attributedString:_textStorage limitedToNumberOfLines:0 lineCount:&lineCount].size;
+        currentTextSize = [self textRectForBounds:CGRectMake(0, 0, CGRectGetWidth(bounds), MLFLOAT_MAX) attributedString:attrStr limitedToNumberOfLines:0 lineCount:&lineCount].size;
         //如果求行数大于设置行数，也不认为塞满了
-        
-        //这里需要注意，如果当前字符串的换行符次数本身就大于numberOfLine，那就是大了多少就减去多少.
-        NSInteger stringLineCount = [_textStorage.string lineCount];
-        NSInteger offsetLineCount = MAX(0, stringLineCount-numberOfLines);
-        
-        if (lineCount>numberOfLines+offsetLineCount) {
+        if (lineCount>numberOfLines) {
             return NO;
         }
     }else{
-        currentTextSize = [self textRectForBounds:CGRectMake(0, 0, CGRectGetWidth(bounds), MLFLOAT_MAX) attributedString:_textStorage limitedToNumberOfLines:0 lineCount:NULL].size;
+        currentTextSize = [self textRectForBounds:CGRectMake(0, 0, CGRectGetWidth(bounds), MLFLOAT_MAX) attributedString:attrStr limitedToNumberOfLines:0 lineCount:NULL].size;
     }
     
     //大小已经足够就认作OK
     if (currentTextSize.width<=CGRectGetWidth(bounds)&&currentTextSize.height<=CGRectGetHeight(bounds)) {
+        if (resultAttributedString) {
+            (*resultAttributedString) = attrStr;
+        }
         return YES;
     }
     
@@ -399,13 +402,26 @@ static inline NSArray * kStylePropertyNames() {
     }
     
     if (self.adjustsFontSizeToFitWidth) {
+        
         //初始scale，每次adjust都需要从头开始，因为也可能有当前font被adjust小过需要还原。
         CGFloat scaleFactor = 1.0f;
         BOOL mustContinueAdjust = YES;
+        NSAttributedString *attributedString = [self attributedTextForTextStorageFromLabelProperties];
+        
         //numberOfLine>0时候可以直接尝试找寻一个preferredScale
         if (self.numberOfLines>0) {
-            //找到当前text绘制在一行时候需要占用的宽度，其实这个值很可能不够，因为多行时候可能会因为wordwrap的关系多行+起的总宽度会多。
-            CGFloat textWidth = [self textRectForBounds:CGRectMake(0, 0, MLFLOAT_MAX, MLFLOAT_MAX) attributedString:[self attributedTextForTextStorageFromLabelProperties] limitedToNumberOfLines:0 lineCount:NULL].size.width;
+            //一点点矫正,以使得内容能放到当前的size里
+            
+            //找到当前text绘制在一行时候需要占用的宽度，其实这个值很可能不够，因为多行时候可能会因为wordwrap的关系多行+起的总宽度会多。但是这个能找到一个合适的矫正过程的开始值，大大减少矫正次数。
+            
+            //还有一种情况就是，有可能由于字符串里带换行符的关系造成压根不可能绘制到一行，这时候应该取会显示的最长的那一行。所以这里需要先截除必然不会显示的部分。
+            NSUInteger stringlineCount = [attributedString.string lineCount];
+            if (stringlineCount>self.numberOfLines) {
+                //这里说明必然要截取
+                attributedString = [attributedString attributedSubstringFromRange:NSMakeRange(0, [attributedString.string lengthToLineIndex:self.numberOfLines-1])];
+            }
+            
+            CGFloat textWidth = [self textRectForBounds:CGRectMake(0, 0, MLFLOAT_MAX, MLFLOAT_MAX) attributedString:attributedString limitedToNumberOfLines:0 lineCount:NULL].size.width;
             textWidth = MAX(0, textWidth-_textInsets.left-_textInsets.right);
             if (textWidth>0) {
                 CGFloat availableWidth = _textContainer.size.width*self.numberOfLines;
@@ -420,10 +436,11 @@ static inline NSArray * kStylePropertyNames() {
         
         if (mustContinueAdjust) {
             //一点点矫正,以使得内容能放到当前的size里
-            NSAttributedString *originalAttributedText = [self attributedTextForTextStorageFromLabelProperties];
-            while (![self adjustsCurrentFontSizeToFitWidthWithScaleFactor:scaleFactor numberOfLines:self.numberOfLines originalAttributedText:originalAttributedText bounds:self.bounds]){
+            NSAttributedString *resultAttributedString = attributedString;
+            while (![self adjustsCurrentFontSizeToFitWidthWithScaleFactor:scaleFactor numberOfLines:self.numberOfLines originalAttributedText:attributedString bounds:self.bounds resultAttributedString:&resultAttributedString]){
                 scaleFactor *=  kAdjustFontSizeEveryScalingFactor;
             };
+            [_textStorage setAttributedString:resultAttributedString];
         }
     }
     
@@ -464,12 +481,18 @@ static inline NSArray * kStylePropertyNames() {
 #pragma mark - sizeThatsFit
 - (CGRect)textRectForBounds:(CGRect)bounds limitedToNumberOfLines:(NSInteger)numberOfLines
 {
+    //fit实现与drawTextInRect大部分一个屌样，所以不写注释了。
     if (numberOfLines>1&&self.adjustsFontSizeToFitWidth) {
-        NSAttributedString *savedAttributedString = [_textStorage copy];
-        //这时候需要在此调整字体大小去fit当前width，以及numerOfLine得到adjust后的文本占用的区域大小
         CGFloat scaleFactor = 1.0f;
-        //找到当前text绘制在一行时候需要占用的宽度，其实这个值很可能不够，因为多行时候可能会因为wordwrap的关系多行+起的总宽度会多。
-        CGFloat textWidth = [self textRectForBounds:CGRectMake(0, 0, MLFLOAT_MAX, MLFLOAT_MAX) attributedString:[self attributedTextForTextStorageFromLabelProperties] limitedToNumberOfLines:0 lineCount:NULL].size.width;
+        NSAttributedString *attributedString = [self attributedTextForTextStorageFromLabelProperties];
+        
+        NSUInteger stringlineCount = [attributedString.string lineCount];
+        if (stringlineCount>self.numberOfLines) {
+            //这里说明必然要截取
+            attributedString = [attributedString attributedSubstringFromRange:NSMakeRange(0, [attributedString.string lengthToLineIndex:self.numberOfLines-1])];
+        }
+        
+        CGFloat textWidth = [self textRectForBounds:CGRectMake(0, 0, MLFLOAT_MAX, MLFLOAT_MAX) attributedString:attributedString limitedToNumberOfLines:0 lineCount:NULL].size.width;
         textWidth = MAX(0, textWidth-_textInsets.left-_textInsets.right);
         if (textWidth>0) {
             CGFloat availableWidth = _textContainer.size.width*numberOfLines;
@@ -478,16 +501,13 @@ static inline NSArray * kStylePropertyNames() {
                 scaleFactor = availableWidth / textWidth;
             }
             //一点点矫正,以使得内容能放到当前的size里
-            NSAttributedString *originalAttributedText = [self attributedTextForTextStorageFromLabelProperties];
-            while (![self adjustsCurrentFontSizeToFitWidthWithScaleFactor:scaleFactor numberOfLines:numberOfLines originalAttributedText:originalAttributedText bounds:bounds]){
+            NSAttributedString *resultAttributedString = attributedString;
+            while (![self adjustsCurrentFontSizeToFitWidthWithScaleFactor:scaleFactor numberOfLines:numberOfLines originalAttributedText:attributedString bounds:bounds resultAttributedString:&resultAttributedString]){
                 scaleFactor *=  kAdjustFontSizeEveryScalingFactor;
             };
             
-            //计算当前adjust之后的合适大小
-            CGRect textBounds = [self textRectForBounds:bounds attributedString:_textStorage limitedToNumberOfLines:numberOfLines lineCount:NULL];
-            
-            //还原内容
-            [_textStorage setAttributedString:savedAttributedString];
+            //计算当前adjust之后的合适大小,为什么不用adjust里面的 因为也可能有异常情况，例如压根adjust就没走到计算大小那一步啊什么的。
+            CGRect textBounds = [self textRectForBounds:bounds attributedString:resultAttributedString limitedToNumberOfLines:numberOfLines lineCount:NULL];
             
             return textBounds;
         }
@@ -541,7 +561,7 @@ static inline NSArray * kStylePropertyNames() {
     _textContainer.maximumNumberOfLines = numberOfLines;
     
     if (isChanged) {
-        [_layoutManager invalidateLayoutForCharacterRange:NSMakeRange(0, _textStorage.string.length) actualCharacterRange:NULL];
+        [self setNeedsDisplay];
     }
 }
 
