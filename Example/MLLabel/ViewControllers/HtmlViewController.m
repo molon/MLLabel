@@ -66,6 +66,9 @@
     LABEL.linkTextAttributes = @{NSForegroundColorAttributeName:kDefaultLinkColorForMLLinkLabel,NSUnderlineStyleAttributeName:@(0)};
     LABEL.activeLinkTextAttributes = @{NSForegroundColorAttributeName:kDefaultLinkColorForMLLinkLabel,NSBackgroundColorAttributeName:kDefaultActiveLinkBackgroundColorForMLLinkLabel,NSUnderlineStyleAttributeName:@(0)};
     
+    
+    //最好不要随便拿html源码使用，这里只是为了更好的利用html生成可用的NSAttributedString，仅仅作为辅助来用。
+    //这解析也有点耗费时间，而且必须在主线程使用，所以酌情使用
     self.label.attributedText = [NSAttributedString attributedStringWithHTML:html];
     
     self.label.frameWidth = self.view.frameWidth-10.0f*2;
