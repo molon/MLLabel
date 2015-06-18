@@ -173,6 +173,9 @@ REGULAREXPRESSION(HashtagRegularExpression, @"#([\\u4e00-\\u9fa5\\w\\-]+)")
 {
     NSMutableAttributedString *attributedString = [super attributedTextForTextStorageFromLabelProperties];
     
+    //默认的链接样式不是我们想要的，去除它
+    [attributedString removeAttribute:NSLinkAttributeName range:NSMakeRange(0, attributedString.length)];
+    
     //检测是否有链接，有的话就直接给设置链接样式
     for (MLLink *link in self.links) {
         NSDictionary *attributes = nil;
@@ -187,11 +190,7 @@ REGULAREXPRESSION(HashtagRegularExpression, @"#([\\u4e00-\\u9fa5\\w\\-]+)")
                 attributes = @{NSForegroundColorAttributeName:kDefaultLinkColorForMLLinkLabel};
             }
         }
-        
-        //默认的链接样式不是我们想要的，去除它
-        [attributedString removeAttribute:NSLinkAttributeName range:link.linkRange];
-        
-        [attributedString removeAttributes:[attributes allKeys] range:link.linkRange];
+//        [attributedString removeAttributes:[attributes allKeys] range:link.linkRange];
         [attributedString addAttributes:attributes range:link.linkRange];
     }
     

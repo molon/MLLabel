@@ -14,7 +14,7 @@ static inline NSArray * kVCClassNames() {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _VCClassNames = @[@"Normal",@"Link",@"Expression",
-                          @"Html",@"List"];
+                          @"Html",@"ListNoNib",@"List"];
     });
     return _VCClassNames;
 }

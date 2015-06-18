@@ -165,6 +165,8 @@ static inline NSArray * kStylePropertyNames() {
 #pragma mark - set text
 - (void)setText:(NSString *)text
 {
+    NSAssert(!text||[text isKindOfClass:[NSString class]], @"text must be NSString");
+    
     [super setText:text];
     
     self.lastTextType = MLLastTextTypeNormal;
@@ -177,6 +179,8 @@ static inline NSArray * kStylePropertyNames() {
 
 - (void)setAttributedText:(NSAttributedString *)attributedText
 {
+    NSAssert(!attributedText||[attributedText isKindOfClass:[NSAttributedString class]], @"text must be NSString");
+    
     [super setAttributedText:attributedText];
     self.lastAttributedText = attributedText;
     
@@ -223,12 +227,14 @@ static inline NSArray * kStylePropertyNames() {
     if (!self.lastAttributedText) {
         return [[NSMutableAttributedString alloc]initWithString:@""];
     }
+    
     //遍历并且添加Label默认的属性
     NSMutableAttributedString *newAttrStr = [[NSMutableAttributedString alloc]initWithString:self.lastAttributedText.string attributes:[self attributesFromLabelProperties]];
     
+#warning 这里有点耗费性能
     [self.lastAttributedText enumerateAttributesInRange:NSMakeRange(0, newAttrStr.length) options:0 usingBlock:^(NSDictionary *attrs, NSRange range, BOOL *stop) {
         if (attrs.count>0) {
-            [newAttrStr removeAttributes:[attrs allKeys] range:range];
+//            [newAttrStr removeAttributes:[attrs allKeys] range:range];
             [newAttrStr addAttributes:attrs range:range];
         }
     }];
@@ -295,6 +301,8 @@ static inline NSArray * kStylePropertyNames() {
     
     //TODO 最好回头把重复赋值和初始化这些工作也给减掉，尝试是否能提高性能
     MLLabelTextStorage *textStorage = [MLLabelTextStorage new];
+    [textStorage setAttributedString:attributedString];
+    
     NSTextContainer *textContainer = [[NSTextContainer alloc]initWithSize:newTextContainerSize];
     textContainer.maximumNumberOfLines = numberOfLines;
     textContainer.lineBreakMode = _textContainer.lineBreakMode;
@@ -304,8 +312,7 @@ static inline NSArray * kStylePropertyNames() {
     [textStorage addLayoutManager:layoutManager];
     [layoutManager addTextContainer:textContainer];
     
-    [textStorage setAttributedString:attributedString];
-    
+#warning 这里特别的耗费性能
     NSRange glyphRange = [layoutManager glyphRangeForTextContainer:textContainer];
     
     if (lineCount) {
@@ -356,7 +363,7 @@ static inline NSArray * kStylePropertyNames() {
                 }
                 UIFont *newFont = [UIFont fontWithName:fontName size:newSize];
                 
-                [attrStr removeAttribute:NSFontAttributeName range:range];
+//                [attrStr removeAttribute:NSFontAttributeName range:range];
                 [attrStr addAttribute:NSFontAttributeName value:newFont range:range];
             }
         }];
@@ -524,7 +531,7 @@ static inline NSArray * kStylePropertyNames() {
 - (CGSize)preferredSizeWithMaxWidth:(CGFloat)maxWidth
 {
     CGSize size = [self sizeThatFits:CGSizeMake(maxWidth, MLFLOAT_MAX)];
-    size.width = MIN(size.width, maxWidth); //在numberOfLine模式下返回的可能会比maxWidth大，所以这里我们限制下
+    size.width = MIN(size.width, maxWidth); //在numberOfLine为1模式下返回的可能会比maxWidth大，所以这里我们限制下
     return size;
 }
 

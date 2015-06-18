@@ -1,5 +1,5 @@
 //
-//  ListTableViewCell.h
+//  ListNoNibTableViewCell.h
 //  MLLabel
 //
 //  Created by molon on 15/6/18.
@@ -9,9 +9,9 @@
 #import <UIKit/UIKit.h>
 #import <MLLabel/MLLinkLabel.h>
 
-@interface ListTableViewCell : UITableViewCell
+@interface ListNoNibTableViewCell : UITableViewCell
 
-@property (weak, nonatomic) IBOutlet MLLinkLabel *textlabel;
+@property (nonatomic, strong,readonly) MLLinkLabel *label;
 
 + (CGFloat)heightForExpressionText:(NSAttributedString*)expressionText width:(CGFloat)width;
 
