@@ -12,11 +12,9 @@
 		322003BE2ABF3A59917F616C /* NSAttributedString+MLLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = 0E286E1DA6D179D6252FFE22 /* NSAttributedString+MLLabel.m */; };
 		3712896753B79732B5B178AA /* NSAttributedString+MLExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 67284E6226C47BEDC9DF54BC /* NSAttributedString+MLExpression.h */; };
 		390AFD218706F781C65D2D5A /* NSMutableAttributedString+MLLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = A07DA6BEF0E003582137777C /* NSMutableAttributedString+MLLabel.m */; };
-		50CFAEF9E08A36EC27015F06 /* MLExpressionLabel.m in Sources */ = {isa = PBXBuildFile; fileRef = F213EF1CDBA6794FC62F9936 /* MLExpressionLabel.m */; };
 		622DC0F2F439FFD77631D1BA /* MLTextAttachment.m in Sources */ = {isa = PBXBuildFile; fileRef = 52E44A9641532E2682C7C1F4 /* MLTextAttachment.m */; };
 		6F194525DA24A3A0C84191AD /* MLLabelTextStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = DD946F1AFB58566ABF29CA8A /* MLLabelTextStorage.m */; };
 		712D59C1D08E084739C453B1 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B858BB26D26D13BECC376977 /* Foundation.framework */; };
-		7CF3989C6C4D5A0266016ED9 /* MLExpressionLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = EE475AB1EA60BEEE1404C0BA /* MLExpressionLabel.h */; };
 		7F652E6B79D993D0A9918D58 /* NSString+MLLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F0F83F40FB5CA9EC8104D8 /* NSString+MLLabel.h */; };
 		80D1E466F49DA4725DE61F7B /* NSAttributedString+MLLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A15CDAB7D85CF508E4437EC /* NSAttributedString+MLLabel.h */; };
 		89B3F5F6742E84C56B8F3F5F /* MLLinkLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = 4385DC0A62D784192BDD4DE8 /* MLLinkLabel.h */; };
@@ -80,10 +78,8 @@
 		B858BB26D26D13BECC376977 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.3.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		DD946F1AFB58566ABF29CA8A /* MLLabelTextStorage.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLLabelTextStorage.m; sourceTree = "<group>"; };
 		E1A5F9F35DDB6FE6D6F6DD6E /* MLExpressionManager.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLExpressionManager.h; sourceTree = "<group>"; };
-		EE475AB1EA60BEEE1404C0BA /* MLExpressionLabel.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLExpressionLabel.h; sourceTree = "<group>"; };
 		EF91DFA1B87662FF76234D6C /* Pods-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-acknowledgements.plist"; sourceTree = "<group>"; };
 		F070FADE098E140DDA974D8C /* MLExpressionManager.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLExpressionManager.m; sourceTree = "<group>"; };
-		F213EF1CDBA6794FC62F9936 /* MLExpressionLabel.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = MLExpressionLabel.m; sourceTree = "<group>"; };
 		F5E3DC1BFFEC5292C40E46FC /* Pods-MLLabel.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-MLLabel.xcconfig"; sourceTree = "<group>"; };
 		F5F0F83F40FB5CA9EC8104D8 /* NSString+MLLabel.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "NSString+MLLabel.h"; sourceTree = "<group>"; };
 		F67DEEBB0444C2D1FF28882E /* MLLabelTextStorage.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLLabelTextStorage.h; sourceTree = "<group>"; };
@@ -114,8 +110,6 @@
 		14A64BBA30EC806F0DCCB894 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				EE475AB1EA60BEEE1404C0BA /* MLExpressionLabel.h */,
-				F213EF1CDBA6794FC62F9936 /* MLExpressionLabel.m */,
 				E1A5F9F35DDB6FE6D6F6DD6E /* MLExpressionManager.h */,
 				F070FADE098E140DDA974D8C /* MLExpressionManager.m */,
 				F8C30B714111C4067D39D6F8 /* MLLabel.h */,
@@ -239,7 +233,6 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7CF3989C6C4D5A0266016ED9 /* MLExpressionLabel.h in Headers */,
 				911F9A24790407E20D937AB4 /* MLExpressionManager.h in Headers */,
 				F163732D3C512B5641EEBC54 /* MLLabel+Override.h in Headers */,
 				98EE7A5A68F9F500B335F10E /* MLLabel.h in Headers */,
@@ -331,7 +324,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				50CFAEF9E08A36EC27015F06 /* MLExpressionLabel.m in Sources */,
 				110CD107193BCBC27F3294E7 /* MLExpressionManager.m in Sources */,
 				A9B7446FA7062F0BCFB3C118 /* MLLabel.m in Sources */,
 				9EAC2D8C3E63DCE2ABE484B3 /* MLLabelLayoutManager.m in Sources */,

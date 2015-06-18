@@ -142,7 +142,7 @@ REGULAREXPRESSION(HashtagRegularExpression, @"#([\\u4e00-\\u9fa5\\w\\-]+)")
     self.userInteractionEnabled = YES;
     
     //默认都检测
-    self.dataDetectorTypes = MLDataDetectorTypeURL|MLDataDetectorTypePhoneNumber|MLDataDetectorTypeEmail;
+    self.dataDetectorTypes = MLDataDetectorTypeURL|MLDataDetectorTypePhoneNumber|MLDataDetectorTypeEmail|MLDataDetectorTypeAttributedLink;
     self.dataDetectorTypesOfAttributedLinkValue = MLDataDetectorTypeNone;
     self.allowLineBreakInsideLinks = NO;
     

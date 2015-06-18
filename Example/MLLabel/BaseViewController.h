@@ -9,7 +9,9 @@
 #import <UIKit/UIKit.h>
 #import <MLLabel/MLLabel.h>
 #import <MLLabel/MLLinkLabel.h>
-#import <MLLabel/MLExpressionLabel.h>
+#import <MLLabel/NSString+MLExpression.h>
+#import <MLLabel/NSAttributedString+MLExpression.h>
+
 #import <MLTextAttachment.h>
 #import "UIView+Convenience.h"
 #import "MolonDebug.h"

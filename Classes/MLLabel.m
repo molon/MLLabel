@@ -231,7 +231,7 @@ static NSArray * kStylePropertyNames() {
     //遍历并且添加Label默认的属性
     NSMutableAttributedString *newAttrStr = [[NSMutableAttributedString alloc]initWithString:self.lastAttributedText.string attributes:[self attributesFromLabelProperties]];
     
-#warning 这里在属性多的时候比较耗费性能
+#warning 这里在属性多的时候比较耗费性能，回头得想个解决方案
     [self.lastAttributedText enumerateAttributesInRange:NSMakeRange(0, newAttrStr.length) options:0 usingBlock:^(NSDictionary *attrs, NSRange range, BOOL *stop) {
         if (attrs.count>0) {
 //            [newAttrStr removeAttributes:[attrs allKeys] range:range];

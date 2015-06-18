@@ -8,7 +8,7 @@
 
 #import "ExpressionViewController.h"
 
-#define LABEL ((MLExpressionLabel*)self.label)
+#define LABEL ((MLLinkLabel*)self.label)
 @interface ExpressionViewController ()
 
 @end
@@ -25,22 +25,10 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (MLLabel *)label
-{
-    MLExpressionLabel *label = (MLExpressionLabel*)[super label];
-    if (label.expressionRegex.length<=0) {
-        //这里这样赋值，只是因为继承的原因，demo嘛，省事
-        label.expressionRegex = @"\\[[a-zA-Z0-9\\u4e00-\\u9fa5]+\\]";
-        label.expressionPlistName = @"Expression";
-        label.expressionBundleName = @"Expression";
-    }
-    return label;
-}
-
 #pragma mark - override
 - (Class)lableClass
 {
-    return [MLExpressionLabel class];
+    return [MLLinkLabel class];
 }
 
 - (NSInteger)resultCount
@@ -59,8 +47,10 @@
     LABEL.linkTextAttributes = nil;
     LABEL.activeLinkTextAttributes = nil;
     
+    MLExpression *exp = [MLExpression expressionWithRegex:@"\\[[a-zA-Z0-9\\u4e00-\\u9fa5]+\\]" plistName:@"Expression" bundleName:@"Expression"];
+    
     //注意，[心碎了]这个其实是匹配了正则，但是没有对应图像的，这里是故意加个这样的来测试。
-    LABEL.expressionText = @"人生若只如初见，[坏笑]何事秋风悲画扇。http://baidu.com等闲变却故人心[亲亲]，dudl@qq.com却道故人心易变。13612341234骊山语罢清宵半[心碎了]，泪雨零铃终不怨[左哼哼]。#何如 薄幸@锦衣郎，比翼连枝当日愿。";
+    LABEL.attributedText = [@"人生若只如初见，[坏笑]何事秋风悲画扇。http://baidu.com等闲变却故人心[亲亲]，dudl@qq.com却道故人心易变。13612341234骊山语罢清宵半[心碎了]，泪雨零铃终不怨[左哼哼]。#何如 薄幸@锦衣郎，比翼连枝当日愿。" expressionAttributedStringWithExpression:exp];
     
     [LABEL setDidClickLinkBlock:^(MLLink *link, NSString *linkText, MLLinkLabel *label) {
         NSString *tips = [NSString stringWithFormat:@"Click\nlinkType:%ld\nlinkText:%@\nlinkValue:%@",link.linkType,linkText,link.linkValue];
@@ -70,7 +60,7 @@
     if (result==0) {
     }else{
         LABEL.numberOfLines = 1;
-        LABEL.expressionText = @"扬之水，[得意]不流束楚";
+        LABEL.attributedText = [@"扬之水，[得意]不流束楚" expressionAttributedStringWithExpression:exp];
     }
     self.label.frameWidth = self.view.frameWidth-10.0f*2;
     [self.label sizeToFit];
