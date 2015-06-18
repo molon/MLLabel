@@ -18,7 +18,7 @@ static CGFloat MLFLOAT_MAX = 100000.0f;
 static CGFloat ADJUST_MIN_FONT_SIZE = 1.0f;
 static CGFloat ADJUST_MIN_SCALE_FACTOR = 0.01f;
 
-static inline NSArray * kStylePropertyNames() {
+static NSArray * kStylePropertyNames() {
     static NSArray *_stylePropertyNames = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -231,7 +231,7 @@ static inline NSArray * kStylePropertyNames() {
     //遍历并且添加Label默认的属性
     NSMutableAttributedString *newAttrStr = [[NSMutableAttributedString alloc]initWithString:self.lastAttributedText.string attributes:[self attributesFromLabelProperties]];
     
-#warning 这里有点耗费性能
+#warning 这里在属性多的时候比较耗费性能
     [self.lastAttributedText enumerateAttributesInRange:NSMakeRange(0, newAttrStr.length) options:0 usingBlock:^(NSDictionary *attrs, NSRange range, BOOL *stop) {
         if (attrs.count>0) {
 //            [newAttrStr removeAttributes:[attrs allKeys] range:range];
@@ -312,7 +312,6 @@ static inline NSArray * kStylePropertyNames() {
     [textStorage addLayoutManager:layoutManager];
     [layoutManager addTextContainer:textContainer];
     
-#warning 这里特别的耗费性能
     NSRange glyphRange = [layoutManager glyphRangeForTextContainer:textContainer];
     
     if (lineCount) {

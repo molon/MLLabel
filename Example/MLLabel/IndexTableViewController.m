@@ -9,7 +9,7 @@
 #import "IndexTableViewController.h"
 #import "UITableViewCell+Common.h"
 
-static inline NSArray * kVCClassNames() {
+static NSArray * kVCClassNames() {
     static NSArray *_VCClassNames = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{

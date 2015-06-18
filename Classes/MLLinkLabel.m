@@ -13,7 +13,7 @@
 
 #define REGULAREXPRESSION_OPTION(regularExpression,regex,option) \
 \
-static inline NSRegularExpression * k##regularExpression() { \
+static NSRegularExpression * k##regularExpression() { \
 static NSRegularExpression *_##regularExpression = nil; \
 static dispatch_once_t onceToken; \
 dispatch_once(&onceToken, ^{ \
@@ -142,7 +142,7 @@ REGULAREXPRESSION(HashtagRegularExpression, @"#([\\u4e00-\\u9fa5\\w\\-]+)")
     self.userInteractionEnabled = YES;
     
     //默认都检测
-    self.dataDetectorTypes = MLDataDetectorTypeAll;
+    self.dataDetectorTypes = MLDataDetectorTypeURL|MLDataDetectorTypePhoneNumber|MLDataDetectorTypeEmail;
     self.dataDetectorTypesOfAttributedLinkValue = MLDataDetectorTypeNone;
     self.allowLineBreakInsideLinks = NO;
     
@@ -199,7 +199,7 @@ REGULAREXPRESSION(HashtagRegularExpression, @"#([\\u4e00-\\u9fa5\\w\\-]+)")
 }
 
 #pragma mark - 正则匹配相关
-static inline NSArray * kAllRegexps() {
+static NSArray * kAllRegexps() {
     static NSArray *_allRegexps = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{

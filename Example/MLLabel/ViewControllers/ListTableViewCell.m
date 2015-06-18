@@ -16,7 +16,7 @@
     self.selectionStyle = UITableViewCellSelectionStyleNone;
     
     
-    self.textlabel.font = [UIFont systemFontOfSize:15.0f];
+    self.textlabel.font = [UIFont systemFontOfSize:16.0f];
     
     self.textlabel.numberOfLines = 0;
     self.textlabel.textInsets = UIEdgeInsetsMake(10, 10, 10, 10);
@@ -60,12 +60,12 @@
 }
 
 
-static inline MLLinkLabel * kProtypeLabel() {
+static MLLinkLabel * kProtypeLabel() {
     static MLLinkLabel *_protypeLabel = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _protypeLabel = [MLLinkLabel new];
-        _protypeLabel.font = [UIFont systemFontOfSize:15.0f];
+        _protypeLabel.font = [UIFont systemFontOfSize:16.0f];
         
         _protypeLabel.numberOfLines = 0;
         _protypeLabel.textInsets = UIEdgeInsetsMake(10, 10, 10, 10);

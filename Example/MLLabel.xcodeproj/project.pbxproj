@@ -43,6 +43,7 @@
 /* Begin PBXFileReference section */
 		36361A221B33286500017846 /* ListNoNibViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListNoNibViewController.h; sourceTree = "<group>"; };
 		36361A231B33286500017846 /* ListNoNibViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListNoNibViewController.m; sourceTree = "<group>"; };
+		36361A251B33313800017846 /* CommonData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonData.h; sourceTree = "<group>"; };
 		36C77BFB1B2A22BA00BD58B7 /* MLLabel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MLLabel.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		36C77BFF1B2A22BA00BD58B7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		36C77C001B2A22BA00BD58B7 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -181,6 +182,7 @@
 		36C77C2A1B2A237D00BD58B7 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				36361A251B33313800017846 /* CommonData.h */,
 				36D9A5CE1B32E90E00C524A9 /* ListCell */,
 				36D9A5BF1B2A2E1300C524A9 /* Base */,
 				36C77C2B1B2A23B100BD58B7 /* NormalViewController.h */,

@@ -44,9 +44,10 @@
 {
     if (!_label) {
         _label = [MLLinkLabel new];
+        _label.textColor = [UIColor whiteColor];
         _label.backgroundColor = [UIColor colorWithRed:0.137 green:0.780 blue:0.118 alpha:1.000];
         
-        _label.font = [UIFont systemFontOfSize:15.0f];
+        _label.font = [UIFont systemFontOfSize:16.0f];
         
         _label.numberOfLines = 0;
         _label.textInsets = UIEdgeInsetsMake(10, 10, 10, 10);
@@ -85,12 +86,12 @@
 }
 
 #pragma mark - height
-static inline MLLinkLabel * kProtypeLabel() {
+static MLLinkLabel * kProtypeLabel() {
     static MLLinkLabel *_protypeLabel = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         _protypeLabel = [MLLinkLabel new];
-        _protypeLabel.font = [UIFont systemFontOfSize:15.0f];
+        _protypeLabel.font = [UIFont systemFontOfSize:16.0f];
         
         _protypeLabel.numberOfLines = 0;
         _protypeLabel.textInsets = UIEdgeInsetsMake(10, 10, 10, 10);

@@ -52,7 +52,7 @@ typedef NS_ENUM(NSUInteger, MLLinkType) {
 
 @interface MLLinkLabel : MLLabel
 
-//默认为MLDataDetectorTypeAll，自动检测全部类型并且转换为链接
+//默认为MLDataDetectorTypeURL|MLDataDetectorTypePhoneNumber|MLDataDetectorTypeEmail，自动检测除了@和#话题的全部类型并且转换为链接
 @property (nonatomic, assign) MLDataDetectorTypes dataDetectorTypes;
 
 //这个是当dataDetectorTypes的MLDataDetectorTypeAttributedLink可用时候，自动对attributedText里Link属性value检测给予linkType的检测类型，默认为MLDataDetectorTypeNone，也就是默认最终得到的linkType为MLLinkTypeOther
