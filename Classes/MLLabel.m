@@ -22,7 +22,8 @@ static inline NSArray * kStylePropertyNames() {
     static NSArray *_stylePropertyNames = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        _stylePropertyNames = @[@"font",@"textAlignment",@"textColor",@"highlighted",
+#warning 这个highlighted在tableview滚动到的时候会设置下，然后就造成resetText，很鸡巴，耗费性能
+        _stylePropertyNames = @[@"font",@"textAlignment",@"textColor"/*,@"highlighted"*/,
                                 @"highlightedTextColor",@"shadowColor",@"shadowOffset",@"enabled"];
     });
     return _stylePropertyNames;
@@ -325,6 +326,8 @@ static inline NSArray * kStylePropertyNames() {
     
     textBounds.size = CGSizeMake(CGRectGetWidth(textBounds)+_textInsets.left+_textInsets.right, CGRectGetHeight(textBounds)+_textInsets.top+_textInsets.bottom);
     
+    textBounds.size.height += 1.0f;
+    
     return textBounds;
 }
 
@@ -402,7 +405,6 @@ static inline NSArray * kStylePropertyNames() {
     }
     
     if (self.adjustsFontSizeToFitWidth) {
-        
         //初始scale，每次adjust都需要从头开始，因为也可能有当前font被adjust小过需要还原。
         CGFloat scaleFactor = 1.0f;
         BOOL mustContinueAdjust = YES;

@@ -33,7 +33,7 @@
 
 - (NSInteger)resultCount
 {
-    return 4;
+    return 5;
 }
 
 - (void)changeToResult:(int)result
@@ -73,6 +73,12 @@
             
             CGContextFillRect(ctx, CGRectMake(beginOffset.x-10.0f, beginOffset.y, 5.0f, drawSize.height));
         }];
+    }else if (result==4){
+        self.label.numberOfLines = 0;
+        //测试下attrStr
+        NSMutableAttributedString *attrStr = [[NSMutableAttributedString alloc]initWithString:@"人生若只如初见，何事秋风悲画扇。等闲变却故人心，却道故人心易变。骊山语罢清宵半，泪雨零铃终不怨。何如薄幸锦衣郎，比翼连枝当日愿。"];
+        [attrStr addAttribute:NSForegroundColorAttributeName value:[UIColor blueColor] range:NSMakeRange(2, 10)];
+        self.label.attributedText = attrStr;
     }
     
     if (result!=0) {

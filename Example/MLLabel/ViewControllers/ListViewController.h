@@ -6,8 +6,8 @@
 //  Copyright (c) 2015年 molon. All rights reserved.
 //
 
-#import "BaseViewController.h"
+#import <UIKit/UIKit.h>
 
-@interface ListViewController : BaseViewController
+@interface ListViewController : UITableViewController
 
 @end

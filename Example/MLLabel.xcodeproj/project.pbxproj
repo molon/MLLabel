@@ -23,6 +23,9 @@
 		36D9A5C21B2A303E00C524A9 /* UIView+Convenience.m in Sources */ = {isa = PBXBuildFile; fileRef = 36D9A5C11B2A303E00C524A9 /* UIView+Convenience.m */; };
 		36D9A5C61B2A4B6F00C524A9 /* Expression.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 36D9A5C41B2A4B6F00C524A9 /* Expression.bundle */; };
 		36D9A5C71B2A4B6F00C524A9 /* Expression.plist in Resources */ = {isa = PBXBuildFile; fileRef = 36D9A5C51B2A4B6F00C524A9 /* Expression.plist */; };
+		36D9A5D21B32E92800C524A9 /* ListTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 36D9A5D01B32E92800C524A9 /* ListTableViewCell.m */; };
+		36D9A5D31B32E92800C524A9 /* ListTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 36D9A5D11B32E92800C524A9 /* ListTableViewCell.xib */; };
+		36D9A5D61B32EAF700C524A9 /* UITableViewCell+Common.m in Sources */ = {isa = PBXBuildFile; fileRef = 36D9A5D51B32EAF700C524A9 /* UITableViewCell+Common.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,6 +68,11 @@
 		36D9A5C31B2A47EE00C524A9 /* MolonDebug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MolonDebug.h; sourceTree = "<group>"; };
 		36D9A5C41B2A4B6F00C524A9 /* Expression.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Expression.bundle; sourceTree = "<group>"; };
 		36D9A5C51B2A4B6F00C524A9 /* Expression.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expression.plist; sourceTree = "<group>"; };
+		36D9A5CF1B32E92800C524A9 /* ListTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListTableViewCell.h; sourceTree = "<group>"; };
+		36D9A5D01B32E92800C524A9 /* ListTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ListTableViewCell.m; sourceTree = "<group>"; };
+		36D9A5D11B32E92800C524A9 /* ListTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ListTableViewCell.xib; sourceTree = "<group>"; };
+		36D9A5D41B32EAF700C524A9 /* UITableViewCell+Common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UITableViewCell+Common.h"; sourceTree = "<group>"; };
+		36D9A5D51B32EAF700C524A9 /* UITableViewCell+Common.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UITableViewCell+Common.m"; sourceTree = "<group>"; };
 		CCD8AB091A208F04A73124F3 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		D62DD6CBA6CB553CF784B7DE /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E9D5A4BA8166F680968BF2FA /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
@@ -167,6 +175,7 @@
 		36C77C2A1B2A237D00BD58B7 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				36D9A5CE1B32E90E00C524A9 /* ListCell */,
 				36D9A5BF1B2A2E1300C524A9 /* Base */,
 				36C77C2B1B2A23B100BD58B7 /* NormalViewController.h */,
 				36C77C2C1B2A23B100BD58B7 /* NormalViewController.m */,
@@ -189,6 +198,18 @@
 				36D9A5BD1B2A2E0900C524A9 /* BaseViewController.m */,
 			);
 			name = Base;
+			sourceTree = "<group>";
+		};
+		36D9A5CE1B32E90E00C524A9 /* ListCell */ = {
+			isa = PBXGroup;
+			children = (
+				36D9A5CF1B32E92800C524A9 /* ListTableViewCell.h */,
+				36D9A5D01B32E92800C524A9 /* ListTableViewCell.m */,
+				36D9A5D11B32E92800C524A9 /* ListTableViewCell.xib */,
+				36D9A5D41B32EAF700C524A9 /* UITableViewCell+Common.h */,
+				36D9A5D51B32EAF700C524A9 /* UITableViewCell+Common.m */,
+			);
+			name = ListCell;
 			sourceTree = "<group>";
 		};
 		6814EC81D35E27A3034C9865 /* Frameworks */ = {
@@ -285,6 +306,7 @@
 				36D9A5C61B2A4B6F00C524A9 /* Expression.bundle in Resources */,
 				36D9A5C71B2A4B6F00C524A9 /* Expression.plist in Resources */,
 				36C77C0C1B2A22BA00BD58B7 /* Images.xcassets in Resources */,
+				36D9A5D31B32E92800C524A9 /* ListTableViewCell.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -336,8 +358,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				36D9A5C21B2A303E00C524A9 /* UIView+Convenience.m in Sources */,
+				36D9A5D21B32E92800C524A9 /* ListTableViewCell.m in Sources */,
 				36D9A5BE1B2A2E0900C524A9 /* BaseViewController.m in Sources */,
 				36C77C301B2A23C300BD58B7 /* LinkViewController.m in Sources */,
+				36D9A5D61B32EAF700C524A9 /* UITableViewCell+Common.m in Sources */,
 				36C77C3C1B2A240800BD58B7 /* ListViewController.m in Sources */,
 				36C77C291B2A235B00BD58B7 /* IndexTableViewController.m in Sources */,
 				36C77C2D1B2A23B100BD58B7 /* NormalViewController.m in Sources */,

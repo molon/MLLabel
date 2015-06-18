@@ -7,6 +7,7 @@
 //
 
 #import "IndexTableViewController.h"
+#import "UITableViewCell+Common.h"
 
 static inline NSArray * kVCClassNames() {
     static NSArray *_VCClassNames = nil;
@@ -28,7 +29,7 @@ static inline NSArray * kVCClassNames() {
     [super viewDidLoad];
     self.title = @"MLLabel";
     
-    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:NSStringFromClass([UITableViewCell class])];
+    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:[UITableViewCell cellReuseIdentifier]];
     
 }
 
@@ -45,7 +46,7 @@ static inline NSArray * kVCClassNames() {
 
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([UITableViewCell class]) forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[UITableViewCell cellReuseIdentifier] forIndexPath:indexPath];
     
     cell.textLabel.text = kVCClassNames()[indexPath.row];
     

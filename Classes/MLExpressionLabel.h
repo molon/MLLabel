@@ -15,7 +15,7 @@
 @property (nonatomic, copy) NSString *expressionBundleName; //表情图像包bundle名字
 
 
-//因为原文本最终会因为表情会修正，所以操作时候还是使用expressionText合适点。
+//因为原文本最终会因为表情会修正，所以操作时候还是使用expressionText合适点，取出原文本也用expressionText取合适
 //给这玩意赋值前必须先指定emojiRegex和emojiPlistName
 @property (nonatomic, copy) id expressionText;
 
