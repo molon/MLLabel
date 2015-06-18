@@ -22,8 +22,8 @@ static NSArray * kStylePropertyNames() {
     static NSArray *_stylePropertyNames = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-#warning 这个highlighted在tableview滚动到的时候会设置下，然后就造成resetText，很鸡巴，耗费性能
-        _stylePropertyNames = @[@"font",@"textAlignment",@"textColor"/*,@"highlighted"*/,
+        //TODO: 这个highlighted在tableview滚动到的时候会设置下(即使cell的selectStyle为None)，然后就造成resetText，很鸡巴，耗费性能，这个似乎没辙，实在有必要，后期+个属性来开关
+        _stylePropertyNames = @[@"font",@"textAlignment",@"textColor",@"highlighted",
                                 @"highlightedTextColor",@"shadowColor",@"shadowOffset",@"enabled"];
     });
     return _stylePropertyNames;
@@ -231,7 +231,7 @@ static NSArray * kStylePropertyNames() {
     //遍历并且添加Label默认的属性
     NSMutableAttributedString *newAttrStr = [[NSMutableAttributedString alloc]initWithString:self.lastAttributedText.string attributes:[self attributesFromLabelProperties]];
     
-#warning 这里在属性多的时候比较耗费性能，回头得想个解决方案
+    //TODO: 这里在属性多的时候比较耗费性能，回头得想个解决方案
     [self.lastAttributedText enumerateAttributesInRange:NSMakeRange(0, newAttrStr.length) options:0 usingBlock:^(NSDictionary *attrs, NSRange range, BOOL *stop) {
         if (attrs.count>0) {
 //            [newAttrStr removeAttributes:[attrs allKeys] range:range];
@@ -331,8 +331,6 @@ static NSArray * kStylePropertyNames() {
     textBounds.origin = bounds.origin;
     
     textBounds.size = CGSizeMake(CGRectGetWidth(textBounds)+_textInsets.left+_textInsets.right, CGRectGetHeight(textBounds)+_textInsets.top+_textInsets.bottom);
-    
-    textBounds.size.height += 1.0f;
     
     return textBounds;
 }
@@ -521,6 +519,15 @@ static NSArray * kStylePropertyNames() {
         }
     }
     return  [self textRectForBounds:bounds attributedString:[self attributedTextForTextStorageFromLabelProperties] limitedToNumberOfLines:numberOfLines lineCount:NULL];
+}
+
+- (CGSize)sizeThatFits:(CGSize)size
+{
+    size = [super sizeThatFits:size];
+    if (size.height>0) {
+        size.height++;
+    }
+    return size;
 }
 
 - (CGSize)intrinsicContentSize {

@@ -97,7 +97,7 @@
 - (NSAttributedString*)expressionAttributedStringWithAttributedString:(NSAttributedString*)attributedString expression:(MLExpression*)expression {
     NSAssert(expression&&[expression isValid], @"expression invalid");
     
-#warning 这个最好是放到单独的线程里然后做回调,还需要搞个多线程计算，最后同步结果
+    //TODO: 这个最好是放到单独的线程里然后做回调,还需要搞个多线程计算，最后同步结果
     if (attributedString.length<=0) {
         return attributedString;
     }

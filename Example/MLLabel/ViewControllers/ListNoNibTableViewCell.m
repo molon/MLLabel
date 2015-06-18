@@ -52,7 +52,6 @@
         _label.numberOfLines = 0;
         _label.textInsets = UIEdgeInsetsMake(10, 10, 10, 10);
         
-        
         _label.linkTextAttributes = @{NSForegroundColorAttributeName:[UIColor blueColor]};
         _label.activeLinkTextAttributes = @{NSForegroundColorAttributeName:[UIColor blueColor],NSBackgroundColorAttributeName:kDefaultActiveLinkBackgroundColorForMLLinkLabel};
 
