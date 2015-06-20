@@ -96,7 +96,7 @@ static NSArray * kStylePropertyNames() {
     for (NSString *key in kStylePropertyNames()) {
         [self.styleRecord setValue:[self valueForKey:key] forKey:key];
         //不直接使用NSKeyValueObservingOptionInitial来初始化赋值record，是防止无用的resettext
-        [self addObserver:self forKeyPath:key options:NSKeyValueObservingOptionNew context:nil];
+        [self addObserver:self forKeyPath:key options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew context:nil];
     }
 }
 
@@ -115,6 +115,12 @@ static NSArray * kStylePropertyNames() {
     if ([kStylePropertyNames() containsObject:keyPath]) {
         //存到记录对象里
         [_styleRecord setValue:[object valueForKey:keyPath] forKey:keyPath];
+        
+        id old = change[NSKeyValueChangeOldKey];
+        id new = change[NSKeyValueChangeNewKey];
+        if ([old isEqual:new]||(!old&&!new)) {
+            return;
+        }
         
         [self reSetText];
     }else{
@@ -190,6 +196,7 @@ static NSArray * kStylePropertyNames() {
     
     //如果text和原本的一样的话 super 是不会触发redraw的，但是很遗憾我们的label比较灵活，验证起来很麻烦，所以还是都重绘吧
     [self setNeedsDisplay];
+//    NSLog(@"set attr text %p",self);
 }
 
 #pragma mark - common helper
@@ -332,6 +339,7 @@ static NSArray * kStylePropertyNames() {
     
     textBounds.size = CGSizeMake(CGRectGetWidth(textBounds)+_textInsets.left+_textInsets.right, CGRectGetHeight(textBounds)+_textInsets.top+_textInsets.bottom);
     
+//    NSLog(@"bounds:%@ result:%@ %p",NSStringFromCGRect(bounds),NSStringFromCGRect(textBounds),self);
     return textBounds;
 }
 
@@ -400,6 +408,7 @@ static NSArray * kStylePropertyNames() {
 
 - (void)drawTextInRect:(CGRect)rect
 {
+//    NSLog(@"draw text %p",self);
     //不调用super方法
     //            [super drawTextInRect:rect]; //这里调用可以查看是否绘制和原来的不一致
     
@@ -531,7 +540,11 @@ static NSArray * kStylePropertyNames() {
 }
 
 - (CGSize)intrinsicContentSize {
-    return [self sizeThatFits:[super intrinsicContentSize]];
+    CGSize size = [super intrinsicContentSize];
+    if (size.height>0) {
+        size.height++;
+    }
+    return size;
 }
 
 - (CGSize)preferredSizeWithMaxWidth:(CGFloat)maxWidth
