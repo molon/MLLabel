@@ -463,6 +463,10 @@ static NSArray * kAllRegexps() {
 #pragma mark - 布局相关
 -(BOOL)layoutManager:(NSLayoutManager *)layoutManager shouldBreakLineByWordBeforeCharacterAtIndex:(NSUInteger)charIndex
 {
+    if (self.lineBreakMode == NSLineBreakByCharWrapping) {
+        return NO;
+    }
+    
     if (self.allowLineBreakInsideLinks) {
         return YES;
     }
