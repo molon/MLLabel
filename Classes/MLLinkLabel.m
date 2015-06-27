@@ -141,7 +141,9 @@ REGULAREXPRESSION(HashtagRegularExpression, @"#([\\u4e00-\\u9fa5\\w\\-]+)")
     self.exclusiveTouch = YES;
     self.userInteractionEnabled = YES;
     
-    //默认都检测
+    self.activeLinkToNilDelay = 0.3f;
+    
+    //默认除了话题和@都检测
     self.dataDetectorTypes = MLDataDetectorTypeURL|MLDataDetectorTypePhoneNumber|MLDataDetectorTypeEmail|MLDataDetectorTypeAttributedLink;
     self.dataDetectorTypesOfAttributedLinkValue = MLDataDetectorTypeNone;
     self.allowLineBreakInsideLinks = NO;
@@ -382,7 +384,7 @@ static NSArray * kAllRegexps() {
             [self.delegate didClickLink:self.activeLink linkText:linkText linkLabel:self];
         }
         
-        self.activeLink = nil;
+        [self performSelector:@selector(setActiveLink:) withObject:nil afterDelay:self.activeLinkToNilDelay];
     } else {
         [super touchesEnded:touches withEvent:event];
     }

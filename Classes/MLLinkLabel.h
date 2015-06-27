@@ -39,7 +39,7 @@ typedef NS_ENUM(NSUInteger, MLLinkType) {
 };
 
 #define kDefaultLinkColorForMLLinkLabel [UIColor colorWithRed:0.061 green:0.515 blue:0.862 alpha:1.000]
-#define kDefaultActiveLinkBackgroundColorForMLLinkLabel [UIColor colorWithWhite:0.720 alpha:1.000]
+#define kDefaultActiveLinkBackgroundColorForMLLinkLabel [UIColor colorWithWhite:0.215 alpha:0.300]
 
 @class MLLink,MLLinkLabel;
 
@@ -60,6 +60,10 @@ typedef NS_ENUM(NSUInteger, MLLinkType) {
 
 @property (nonatomic, strong) NSDictionary *linkTextAttributes;
 @property (nonatomic, strong) NSDictionary *activeLinkTextAttributes;
+
+//这个主要是为了不会在点击非常快速结束触摸的情况下，激活的链接样式基本没体现，这里的delay可以让其多体验那个一会。
+//默认为0.3秒
+@property (nonatomic, assign) NSTimeInterval activeLinkToNilDelay;
 
 //是否允许在link内line break，默认为NO，即为不允许，这样的话链接会尽量的不换行
 @property (nonatomic, assign) BOOL allowLineBreakInsideLinks;
