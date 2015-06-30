@@ -54,7 +54,7 @@
         
         _label.linkTextAttributes = @{NSForegroundColorAttributeName:[UIColor blueColor]};
         _label.activeLinkTextAttributes = @{NSForegroundColorAttributeName:[UIColor blueColor],NSBackgroundColorAttributeName:kDefaultActiveLinkBackgroundColorForMLLinkLabel};
-
+        
         [_label setDidClickLinkBlock:^(MLLink *link, NSString *linkText, MLLinkLabel *label) {
             NSString *tips = [NSString stringWithFormat:@"Click\nlinkType:%ld\nlinkText:%@\nlinkValue:%@",link.linkType,linkText,link.linkValue];
             SHOW_SIMPLE_TIPS(tips);
@@ -72,7 +72,18 @@
 #pragma mark - gesture delegate
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
 {
-    return ![self.label linkAtPoint:[touch locationInView:self.label]];
+    //    return ![self.label linkAtPoint:[touch locationInView:self.label]];
+    
+    //如果此手势在外层的外层view的话，不方便直接定位到label的话，可以使用这种方式。
+    CGPoint location = [touch locationInView:gestureRecognizer.view];
+    UIView *view = [gestureRecognizer.view hitTest:location withEvent:nil];
+    if ([view isKindOfClass:[MLLinkLabel class]]) {
+        if ([((MLLinkLabel*)view) linkAtPoint:[touch locationInView:view]]) {
+            return NO;
+        }
+    }
+    
+    return YES;
 }
 
 
@@ -80,7 +91,7 @@
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-
+    
     self.label.frame = CGRectMake(10, 5, self.contentView.frame.size.width-10*2, self.contentView.frame.size.height-5*2);
 }
 
