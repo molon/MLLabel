@@ -10,9 +10,9 @@
 
 @interface MLExpression : NSObject
 
-@property (readonly, nonatomic, strong) NSString *regex;
-@property (readonly, nonatomic, strong) NSString *plistName;
-@property (readonly, nonatomic, strong) NSString *bundleName;
+@property (readonly, nonatomic, copy) NSString *regex;
+@property (readonly, nonatomic, copy) NSString *plistName;
+@property (readonly, nonatomic, copy) NSString *bundleName;
 
 + (instancetype)expressionWithRegex:(NSString*)regex plistName:(NSString*)plistName bundleName:(NSString*)bundleName;
 

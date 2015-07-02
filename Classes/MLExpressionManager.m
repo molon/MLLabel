@@ -13,9 +13,9 @@
 
 @interface MLExpression()
 
-@property (nonatomic, strong) NSString *regex;
-@property (nonatomic, strong) NSString *plistName;
-@property (nonatomic, strong) NSString *bundleName;
+@property (nonatomic, copy) NSString *regex;
+@property (nonatomic, copy) NSString *plistName;
+@property (nonatomic, copy) NSString *bundleName;
 
 @property (nonatomic, strong) NSRegularExpression *expressionRegularExpression;
 @property (nonatomic, strong) NSDictionary *expressionMap;
