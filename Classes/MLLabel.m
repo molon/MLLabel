@@ -306,7 +306,7 @@ static NSArray * kStylePropertyNames() {
         return textBounds;
     }
     
-    //TODO 最好回头把重复赋值和初始化这些工作也给减掉，尝试是否能提高性能
+    //TODO: 最好回头把重复赋值和初始化这些工作也给减掉，尝试是否能提高性能
     MLLabelTextStorage *textStorage = [MLLabelTextStorage new];
     [textStorage setAttributedString:attributedString];
     
