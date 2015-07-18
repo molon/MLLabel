@@ -12,8 +12,7 @@
 
 - (NSAttributedString*)expressionAttributedStringWithExpression:(MLExpression*)expression;
 {
-    NSAttributedString *attributedString = [[NSAttributedString alloc]initWithString:self];
-    return [[MLExpressionManager sharedInstance] expressionAttributedStringWithAttributedString:attributedString expression:(MLExpression*)expression];
+    return [MLExpressionManager expressionAttributedStringWithString:self expression:(MLExpression*)expression];
 }
 
 @end

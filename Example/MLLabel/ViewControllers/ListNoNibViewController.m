@@ -16,8 +16,7 @@
 
 @interface ListNoNibViewController ()
 
-@property (nonatomic, strong) NSArray *data;
-@property (nonatomic, strong) NSMutableArray *expressionData;
+@property (nonatomic, strong) NSArray *expressionData;
 
 @end
 
@@ -31,14 +30,9 @@
     
     [self.tableView registerClass:[ListNoNibTableViewCell class] forCellReuseIdentifier:[ListNoNibTableViewCell cellReuseIdentifier]];
     
-    self.data = kCommonListData();
-    
-    NSMutableArray *expressionData = [NSMutableArray new];
     MLExpression *exp = [MLExpression expressionWithRegex:@"\\[[a-zA-Z0-9\\u4e00-\\u9fa5]+\\]" plistName:@"Expression" bundleName:@"Expression"];
-    for (NSString *str in self.data) {
-        [expressionData addObject:[str expressionAttributedStringWithExpression:exp]];
-    }
-    self.expressionData = expressionData;
+    
+    self.expressionData = [MLExpressionManager expressionAttributedStringsWithStrings:kCommonListData() expression:exp];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -50,7 +44,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return 30;
+    return 300;
 }
 
 

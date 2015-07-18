@@ -13,7 +13,7 @@
 
 - (NSAttributedString*)expressionAttributedStringWithExpression:(MLExpression*)expression
 {
-    return [[MLExpressionManager sharedInstance] expressionAttributedStringWithAttributedString:self expression:expression];
+    return [MLExpressionManager expressionAttributedStringWithString:self expression:expression];
 }
 
 @end

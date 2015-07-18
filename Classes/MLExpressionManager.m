@@ -92,12 +92,46 @@
     return self.expressionRegularExpressionRecords[regex];
 }
 
-
-
-- (NSAttributedString*)expressionAttributedStringWithAttributedString:(NSAttributedString*)attributedString expression:(MLExpression*)expression {
-    NSAssert(expression&&[expression isValid], @"expression invalid");
+//多线程转表情attrStr
++ (NSArray *)expressionAttributedStringsWithStrings:(NSArray*)strings expression:(MLExpression*)expression
+{
+    //由于MLExpression本身是只读的，而且其属性都是线程安全的，所以这里可以直接用
     
-    //TODO: 这个最好是搞成可批量的并且并发线程队列 group_async-> notify 最终回调返回结果
+    NSMutableDictionary *results = [NSMutableDictionary dictionaryWithCapacity:strings.count];
+    
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_group_t group = dispatch_group_create();
+    for (id str in strings) {
+        dispatch_group_async(group, queue, ^{
+            NSAttributedString *result = [MLExpressionManager expressionAttributedStringWithString:str expression:expression];
+            
+            @synchronized(results){
+                results[str] = result;
+            }
+        });
+    }
+    dispatch_group_wait(group, DISPATCH_TIME_FOREVER);
+    
+    //重新排列
+    NSMutableArray *resultArr = [NSMutableArray arrayWithCapacity:results.count];
+    for (id str in strings) {
+        [resultArr addObject:results[str]];
+    }
+
+    return resultArr;
+}
+
++ (NSAttributedString*)expressionAttributedStringWithString:(id)string expression:(MLExpression*)expression {
+    NSAssert(expression&&[expression isValid], @"expression invalid");
+    NSAssert([string isKindOfClass:[NSString class]]||[string isKindOfClass:[NSAttributedString class]], @"string非字符串. %@",string);
+    
+    NSAttributedString *attributedString = nil;
+    if ([string isKindOfClass:[NSString class]]) {
+        attributedString = [[NSAttributedString alloc]initWithString:string];
+    }else{
+        attributedString = string;
+    }
+    
     if (attributedString.length<=0) {
         return attributedString;
     }

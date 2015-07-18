@@ -22,6 +22,9 @@
 
 + (instancetype)sharedInstance;
 
-- (NSAttributedString*)expressionAttributedStringWithAttributedString:(NSAttributedString*)attributedString expression:(MLExpression*)expression;
+//获取对应的表情attrStr
++ (NSAttributedString*)expressionAttributedStringWithString:(id)string expression:(MLExpression*)expression;
+//给一个str数组，返回其对应的表情attrStr数组，顺序一致
++ (NSArray *)expressionAttributedStringsWithStrings:(NSArray*)strings expression:(MLExpression*)expression;
 
 @end
