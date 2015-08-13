@@ -84,6 +84,8 @@ static NSArray * kStylePropertyNames() {
 
 - (void)commonInit
 {
+    self.lineHeightMultiple = 1.0f;
+    
     //设置TextKit初始相关
     [self.textStorage addLayoutManager:self.layoutManager];
     [self.layoutManager addTextContainer:self.textContainer];
@@ -608,12 +610,18 @@ static NSArray * kStylePropertyNames() {
     [self setNeedsDisplay];
 }
 
-
 - (void)setDoBeforeDrawingTextBlock:(void (^)(CGRect rect,CGPoint beginOffset,CGSize drawSize))doBeforeDrawingTextBlock
 {
     _doBeforeDrawingTextBlock = doBeforeDrawingTextBlock;
     
     [self setNeedsDisplay];
+}
+
+- (void)setLineHeightMultiple:(CGFloat)lineHeightMultiple
+{
+    _lineHeightMultiple = lineHeightMultiple;
+    
+    [_layoutManager invalidateLayoutForCharacterRange:NSMakeRange(0, _textStorage.length) actualCharacterRange:NULL];
 }
 
 #pragma mark - UIResponder
@@ -632,4 +640,9 @@ static NSArray * kStylePropertyNames() {
     [[UIPasteboard generalPasteboard] setString:self.text];
 }
 
+#pragma mark - layoutmanager delegate
+- (CGFloat)layoutManager:(NSLayoutManager *)layoutManager lineSpacingAfterGlyphAtIndex:(NSUInteger)glyphIndex withProposedLineFragmentRect:(CGRect)rect
+{
+    return (fmax(_lineHeightMultiple, 1) - 1) * rect.size.height;
+}
 @end

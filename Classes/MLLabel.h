@@ -16,6 +16,7 @@ typedef NS_ENUM(NSUInteger, MLLastTextType) {
 
 @interface MLLabel : UILabel
 
+@property (nonatomic, assign) CGFloat lineHeightMultiple; //只有大于1.0f的时候才有效
 @property (nonatomic, assign) UIEdgeInsets textInsets;
 
 @property (nonatomic, copy) void(^doBeforeDrawingTextBlock)(CGRect rect,CGPoint beginOffset,CGSize drawSize);
