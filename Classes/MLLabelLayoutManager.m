@@ -32,27 +32,31 @@
         return;
     }
     
-    [color setFill];
-    
-    NSRange glyphRange = [self glyphRangeForCharacterRange:charRange actualCharacterRange:NULL];
-    
-    CGPoint textOffset = self.lastDrawPoint;
-    
-    NSRange lineRange = NSMakeRange(glyphRange.location, 1);
-    while (NSMaxRange(lineRange)<=NSMaxRange(glyphRange)) {
-        CGRect lineBounds = [self lineFragmentUsedRectForGlyphAtIndex:lineRange.location effectiveRange:&lineRange];
-        lineBounds.origin.x += textOffset.x;
-        lineBounds.origin.y += textOffset.y;
+    CGContextSaveGState(ctx);
+    {
+        [color setFill];
         
-        for (NSInteger i=0; i<rectCount; i++) {
-            //找到相交的区域并且绘制
-            CGRect validRect = CGRectIntersection(lineBounds, rectArray[i]);
-            if (!CGRectIsEmpty(validRect)) {
-                CGContextFillRect(ctx, validRect);
+        NSRange glyphRange = [self glyphRangeForCharacterRange:charRange actualCharacterRange:NULL];
+        
+        CGPoint textOffset = self.lastDrawPoint;
+        
+        NSRange lineRange = NSMakeRange(glyphRange.location, 1);
+        while (NSMaxRange(lineRange)<=NSMaxRange(glyphRange)) {
+            CGRect lineBounds = [self lineFragmentUsedRectForGlyphAtIndex:lineRange.location effectiveRange:&lineRange];
+            lineBounds.origin.x += textOffset.x;
+            lineBounds.origin.y += textOffset.y;
+            
+            for (NSInteger i=0; i<rectCount; i++) {
+                //找到相交的区域并且绘制
+                CGRect validRect = CGRectIntersection(lineBounds, rectArray[i]);
+                if (!CGRectIsEmpty(validRect)) {
+                    CGContextFillRect(ctx, validRect);
+                }
             }
+            lineRange = NSMakeRange(NSMaxRange(lineRange), 1);
         }
-        lineRange = NSMakeRange(NSMaxRange(lineRange), 1);
     }
+    CGContextRestoreGState(ctx);
 }
 
 @end
