@@ -9,7 +9,7 @@
 #import "MLExpressionManager.h"
 #import "MLTextAttachment.h"
 
-#define kExpressionLineHeightMultiple 1.2f
+#define kExpressionLineHeightMultiple 1.15f
 
 @interface MLExpression()
 

@@ -73,6 +73,8 @@ typedef NS_ENUM(NSUInteger, MLLinkType) {
 
 @property (nonatomic, weak) id<MLLinkLabelDelegate> delegate; //这个优先级没有block高
 
+@property (nonatomic, strong, readonly) NSMutableArray *links; //可以遍历针对自定义
+
 - (MLLink *)linkAtPoint:(CGPoint)location;
 
 - (BOOL)addLink:(MLLink*)link;
