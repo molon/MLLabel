@@ -9,7 +9,12 @@
 #import "MLExpressionManager.h"
 #import "MLTextAttachment.h"
 
-#define kExpressionLineHeightMultiple 1.15f
+/*
+ 如果设置高于1.00f的话，会引起 有表情行的行距 显得比 没表情行的行距 多，显得不工整
+ https://github.com/molon/MLLabel/issues/1
+ 所以我们还是设置为1.00f，至于怎么解决这个问题，请参考Demo里的ClipExpressionViewController
+ */
+#define kExpressionLineHeightMultiple 1.00f
 
 @interface MLExpression()
 

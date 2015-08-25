@@ -47,7 +47,7 @@
     LABEL.linkTextAttributes = nil;
     LABEL.activeLinkTextAttributes = nil;
     
-    MLExpression *exp = [MLExpression expressionWithRegex:@"\\[[a-zA-Z0-9\\u4e00-\\u9fa5]+\\]" plistName:@"Expression" bundleName:@"Expression"];
+    MLExpression *exp = [MLExpression expressionWithRegex:@"\\[[a-zA-Z0-9\\u4e00-\\u9fa5]+\\]" plistName:@"Expression" bundleName:@"ClippedExpression"];
     
     //注意，[心碎了]这个其实是匹配了正则，但是没有对应图像的，这里是故意加个这样的来测试。
     LABEL.attributedText = [@"人生若只如初见，[坏笑]何事秋风悲画扇。http://baidu.com等闲变却故人心[亲亲]，dudl@qq.com却道故人心易变。13612341234骊山语罢清宵半[心碎了]，泪雨零铃终不怨[左哼哼]。#何如 薄幸@锦衣郎，比翼连枝当日愿。" expressionAttributedStringWithExpression:exp];

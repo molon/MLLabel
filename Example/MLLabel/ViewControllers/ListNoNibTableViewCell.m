@@ -51,6 +51,7 @@
         
         _label.numberOfLines = 0;
         _label.textInsets = UIEdgeInsetsMake(10, 10, 10, 10);
+        _label.lineHeightMultiple = 1.1f;
         
         _label.linkTextAttributes = @{NSForegroundColorAttributeName:[UIColor blueColor]};
         _label.activeLinkTextAttributes = @{NSForegroundColorAttributeName:[UIColor blueColor],NSBackgroundColorAttributeName:kDefaultActiveLinkBackgroundColorForMLLinkLabel};
@@ -105,6 +106,7 @@ static MLLinkLabel * kProtypeLabel() {
         
         _protypeLabel.numberOfLines = 0;
         _protypeLabel.textInsets = UIEdgeInsetsMake(10, 10, 10, 10);
+        _protypeLabel.lineHeightMultiple = 1.1f;
     });
     return _protypeLabel;
 }

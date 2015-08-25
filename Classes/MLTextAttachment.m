@@ -32,7 +32,6 @@
 
 + (instancetype)textAttachmentWithLineHeightMultiple:(CGFloat)lineHeightMultiple imageBlock:(UIImage * (^)(CGRect imageBounds,NSTextContainer *textContainer,NSUInteger charIndex,MLTextAttachment *textAttachment))imageBlock
 {
-    NSAssert(lineHeightMultiple>0, @"lineHeightMultiple必须大于0");
     MLTextAttachment *textAttachment = [MLTextAttachment new];
     textAttachment.lineHeightMultiple = lineHeightMultiple;
     textAttachment.imageBlock = imageBlock;
@@ -66,6 +65,12 @@
         
         if (self.lineHeightMultiple>0) {
             width = height = baseLineHeight*self.lineHeightMultiple;
+            if (self.imageBlock) {
+                UIImage *image = self.imageBlock(CGRectZero,textContainer,charIndex,self);
+                if (image) {
+                    width = height*(image.size.width/image.size.height);
+                }
+            }
         }else{
             if (width==0&&height==0) {
                 width = height = lineFrag.size.height;
@@ -86,5 +91,11 @@
     return [super attachmentBoundsForTextContainer:textContainer proposedLineFragment:lineFrag glyphPosition:position characterIndex:charIndex];
 }
 
-
+#pragma mark - setter
+- (void)setLineHeightMultiple:(CGFloat)lineHeightMultiple
+{
+    NSAssert(lineHeightMultiple>0, @"lineHeightMultiple必须大于0");
+    
+    _lineHeightMultiple = lineHeightMultiple;
+}
 @end
