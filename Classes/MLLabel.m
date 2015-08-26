@@ -187,7 +187,7 @@ static NSArray * kStylePropertyNames() {
 
 - (void)setAttributedText:(NSAttributedString *)attributedText
 {
-    NSAssert(!attributedText||[attributedText isKindOfClass:[NSAttributedString class]], @"text must be NSString");
+    NSAssert(!attributedText||[attributedText isKindOfClass:[NSAttributedString class]], @"text must be NSAttributedString");
     
     [super setAttributedText:attributedText];
     self.lastAttributedText = attributedText;
