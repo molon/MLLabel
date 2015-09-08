@@ -24,7 +24,7 @@ static NSArray * kStylePropertyNames() {
     dispatch_once(&onceToken, ^{
         //TODO: 这个highlighted在tableview滚动到的时候会设置下(即使cell的selectStyle为None)，然后就造成resetText，很鸡巴，耗费性能，这个似乎没辙，实在有必要，后期+个属性来开关
         _stylePropertyNames = @[@"font",@"textAlignment",@"textColor",@"highlighted",
-                                @"highlightedTextColor",@"shadowColor",@"shadowOffset",@"enabled"];
+                                @"highlightedTextColor",@"shadowColor",@"shadowOffset",@"enabled",@"lineHeightMultiple",@"lineSpacing"];
     });
     return _stylePropertyNames;
 }
@@ -39,6 +39,9 @@ static NSArray * kStylePropertyNames() {
 @property (nonatomic, strong) UIColor *shadowColor;
 @property (nonatomic, assign) CGSize shadowOffset;
 @property (nonatomic, assign) BOOL enabled;
+
+@property (nonatomic, assign) CGFloat lineHeightMultiple; //行高的multiple
+@property (nonatomic, assign) CGFloat lineSpacing; //行间距
 
 @end
 @implementation MLLabelStylePropertyRecord
@@ -285,6 +288,8 @@ static NSArray * kStylePropertyNames() {
     //水平位置
     NSMutableParagraphStyle *paragraph = [[NSMutableParagraphStyle alloc] init];
     paragraph.alignment = _styleRecord.textAlignment;
+    paragraph.lineSpacing = _styleRecord.lineSpacing;
+    paragraph.lineHeightMultiple = _styleRecord.lineHeightMultiple;
     
     if (!_styleRecord.font) {
         _styleRecord.font = [UIFont systemFontOfSize:17.0f];
@@ -617,13 +622,6 @@ static NSArray * kStylePropertyNames() {
     [self setNeedsDisplay];
 }
 
-- (void)setLineHeightMultiple:(CGFloat)lineHeightMultiple
-{
-    _lineHeightMultiple = lineHeightMultiple;
-    
-    [_layoutManager invalidateLayoutForCharacterRange:NSMakeRange(0, _textStorage.length) actualCharacterRange:NULL];
-}
-
 #pragma mark - UIResponder
 - (BOOL)canBecomeFirstResponder {
     return YES;
@@ -640,9 +638,4 @@ static NSArray * kStylePropertyNames() {
     [[UIPasteboard generalPasteboard] setString:self.text];
 }
 
-#pragma mark - layoutmanager delegate
-- (CGFloat)layoutManager:(NSLayoutManager *)layoutManager lineSpacingAfterGlyphAtIndex:(NSUInteger)glyphIndex withProposedLineFragmentRect:(CGRect)rect
-{
-    return (fmax(_lineHeightMultiple, 1) - 1) * rect.size.height;
-}
 @end
