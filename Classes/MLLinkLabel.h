@@ -76,6 +76,12 @@ typedef NS_ENUM(NSUInteger, MLLinkType) {
 
 @property (nonatomic, strong, readonly) NSMutableArray *links; //可以遍历针对自定义
 
+/**
+ *  link在正式add之前可以自定义修改属性的block
+ */
+@property (nonatomic, copy) void(^beforeAddLinkBlock)(MLLink *link);
+
+
 - (MLLink *)linkAtPoint:(CGPoint)location;
 
 /**

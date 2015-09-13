@@ -289,7 +289,11 @@ static NSArray * kAllRegexps() {
                     linkValue = [value string];
                 }
                 if (linkValue.length>0) {
-                    [links addObject:[MLLink linkWithType:[self linkTypeOfString:linkValue withDataDetectorTypes:self.dataDetectorTypesOfAttributedLinkValue] value:linkValue range:range]];
+                    MLLink *link = [MLLink linkWithType:[self linkTypeOfString:linkValue withDataDetectorTypes:self.dataDetectorTypesOfAttributedLinkValue] value:linkValue range:range];
+                    if (self.beforeAddLinkBlock) {
+                        self.beforeAddLinkBlock(link);
+                    }
+                    [links addObject:link];
                 }
             }
         }];
@@ -311,7 +315,11 @@ static NSArray * kAllRegexps() {
             MLLinkType linkType = [allRegexps indexOfObject:regexp]+1;
             
             if (linkType!=MLLinkTypeNone) {
-                [links addObject:[MLLink linkWithType:linkType value:[plainText substringWithRange:result.range] range:result.range]];
+                MLLink *link = [MLLink linkWithType:linkType value:[plainText substringWithRange:result.range] range:result.range];
+                if (self.beforeAddLinkBlock) {
+                    self.beforeAddLinkBlock(link);
+                }
+                [links addObject:link];
             }
         }];
     }
@@ -462,6 +470,10 @@ static NSArray * kAllRegexps() {
         if (NSMaxRange(NSIntersectionRange(aLink.linkRange, link.linkRange))>0){
             return FALSE;
         }
+    }
+    
+    if (self.beforeAddLinkBlock) {
+        self.beforeAddLinkBlock(link);
     }
     
     //加入它

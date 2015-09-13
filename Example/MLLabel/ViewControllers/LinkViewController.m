@@ -45,6 +45,7 @@
     self.label.textAlignment = NSTextAlignmentCenter;
     self.label.textInsets = UIEdgeInsetsMake(5, 5, 5, 5);
     self.label.lineHeightMultiple = 1.0f;
+    LABEL.beforeAddLinkBlock = nil;
     self.label.text = @"人生若只如初见，http://g.cn何事秋风悲http://baidu.com画扇。等闲变却故人心，dudl@qq.com却道故人心易变。13612341234骊山语罢清宵半，泪雨零铃终不怨。#何如 薄幸@锦衣郎，比翼连枝当日愿。";
     LABEL.dataDetectorTypes = MLDataDetectorTypeAll;
     LABEL.allowLineBreakInsideLinks = NO;
@@ -85,6 +86,7 @@
         [attrStr addAttribute:NSLinkAttributeName value:@"13612341234" range:NSMakeRange(10, 2)];
         LABEL.attributedText = attrStr;
         
+        //在设置了text后针对修改link样式的例子
         for (MLLink *link in LABEL.links) {
             if ([link.linkValue isEqualToString:@"13612341234"]) {
                 link.linkTextAttributes = @{NSForegroundColorAttributeName:[UIColor colorWithRed:1.000 green:0.607 blue:0.172 alpha:1.000]};
@@ -96,6 +98,13 @@
         [attrStr addAttribute:NSLinkAttributeName value:@"http://google.com" range:NSMakeRange(0, 2)];
         [attrStr addAttribute:NSLinkAttributeName value:@"dudl@qq.com" range:NSMakeRange(3, 2)];
         [attrStr addAttribute:NSLinkAttributeName value:@"13612341234" range:NSMakeRange(10, 2)];
+        //设置text之前针对自定义link样式的例子
+        [LABEL setBeforeAddLinkBlock:^(MLLink *link) {
+            if (link.linkType==MLLinkTypeEmail) {
+                link.linkTextAttributes = @{NSForegroundColorAttributeName:[UIColor colorWithRed:0.961 green:0.292 blue:1.000 alpha:1.000]};
+                link.activeLinkTextAttributes = @{NSForegroundColorAttributeName:[UIColor whiteColor],NSBackgroundColorAttributeName:[UIColor colorWithRed:0.211 green:0.753 blue:0.158 alpha:1.000]};
+            }
+        }];
         LABEL.attributedText = attrStr;
         
         //测试给一个含有链接的attrStr，并且自动检测其value所对应linkType
