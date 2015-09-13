@@ -84,6 +84,13 @@
         [attrStr addAttribute:NSLinkAttributeName value:@"dudl@qq.com" range:NSMakeRange(3, 2)];
         [attrStr addAttribute:NSLinkAttributeName value:@"13612341234" range:NSMakeRange(10, 2)];
         LABEL.attributedText = attrStr;
+        
+        for (MLLink *link in LABEL.links) {
+            if ([link.linkValue isEqualToString:@"13612341234"]) {
+                link.linkTextAttributes = @{NSForegroundColorAttributeName:[UIColor colorWithRed:1.000 green:0.607 blue:0.172 alpha:1.000]};
+            }
+        }
+        [LABEL invalidateDisplayForLinks];
     }else if (result==7){
         NSMutableAttributedString *attrStr = [[NSMutableAttributedString alloc]initWithString:@"人生若只如初见，何事秋风悲画扇。等闲变却故人心，却道故人心易变。"];
         [attrStr addAttribute:NSLinkAttributeName value:@"http://google.com" range:NSMakeRange(0, 2)];

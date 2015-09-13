@@ -34,11 +34,7 @@ REGULAREXPRESSION(HashtagRegularExpression, @"#([\\u4e00-\\u9fa5\\w\\-]+)")
 
 @interface MLLink()
 
-@property (nonatomic, assign) MLLinkType linkType;
-@property (nonatomic, copy) NSString *linkValue;
 @property (nonatomic, assign) NSRange linkRange;
-@property (nonatomic, strong) NSDictionary *linkTextAttributes;
-@property (nonatomic, strong) NSDictionary *activeLinkTextAttributes;
 
 @end
 
@@ -105,7 +101,7 @@ REGULAREXPRESSION(HashtagRegularExpression, @"#([\\u4e00-\\u9fa5\\w\\-]+)")
         return;
     }
     
-    [self resetSuperText];
+    [self reSetText];
     
     [CATransaction flush];
 }
@@ -115,48 +111,38 @@ REGULAREXPRESSION(HashtagRegularExpression, @"#([\\u4e00-\\u9fa5\\w\\-]+)")
     if (allowLineBreakInsideLinks==_allowLineBreakInsideLinks) return;
     
     _allowLineBreakInsideLinks = allowLineBreakInsideLinks;
-    [self resetSuperText];
+    [self reSetText];
 }
 
 - (void)setLinkTextAttributes:(NSDictionary *)linkTextAttributes
 {
     _linkTextAttributes = linkTextAttributes;
-    [self resetSuperText];
+    [self reSetText];
 }
 
 - (void)setActiveLinkTextAttributes:(NSDictionary *)activeLinkTextAttributes
 {
     _activeLinkTextAttributes = activeLinkTextAttributes;
-    [self resetSuperText];
+    [self reSetText];
 }
 
 - (void)setDataDetectorTypes:(MLDataDetectorTypes)dataDetectorTypes
 {
     _dataDetectorTypes = dataDetectorTypes;
-    [self reSetText];
+    [super reSetText];
 }
 
 - (void)setDataDetectorTypesOfAttributedLinkValue:(MLDataDetectorTypes)dataDetectorTypesOfAttributedLinkValue
 {
     _dataDetectorTypesOfAttributedLinkValue = dataDetectorTypesOfAttributedLinkValue;
-    [self reSetText];
-}
-
-#pragma mark - helper
-- (void)resetSuperText
-{
-    //重新绘制下,链接没改变，不需要也不能走self
-    if (self.lastTextType == MLLastTextTypeNormal) {
-        [super setText:self.text];
-    }else{
-        [super setAttributedText:self.lastAttributedText];
-    }
+    [super reSetText];
 }
 
 #pragma mark - override
 - (void)reSetText
 {
-    //标记不重新生成链接
+    //标记不重新生成链接，因为修改label的样式，例如字体啊什么的，父类会调用reSetText方法。而这时候如果依然重新生成link的话，会引起addLink方式后添加的link丢失。
+    //然后此类内部所有需要重新生成链接的都是调用[super reSetText]，否则只是需要重绘的调用[self reSetText]
     self.dontReCreateLinks = YES;
     [super reSetText];
     self.dontReCreateLinks = NO;
@@ -212,12 +198,12 @@ REGULAREXPRESSION(HashtagRegularExpression, @"#([\\u4e00-\\u9fa5\\w\\-]+)")
     for (MLLink *link in self.links) {
         NSDictionary *attributes = nil;
         if ([link isEqual:self.activeLink]) {
-            attributes = self.activeLink.activeLinkTextAttributes?self.activeLink.activeLinkTextAttributes:self.activeLinkTextAttributes;
+            attributes = link.activeLinkTextAttributes?link.activeLinkTextAttributes:self.activeLinkTextAttributes;
             if (!attributes) {
                 attributes = @{NSForegroundColorAttributeName:kDefaultLinkColorForMLLinkLabel,NSBackgroundColorAttributeName:kDefaultActiveLinkBackgroundColorForMLLinkLabel};
             }
         }else{
-            attributes = self.activeLink.linkTextAttributes?self.activeLink.linkTextAttributes:self.linkTextAttributes;
+            attributes = link.linkTextAttributes?link.linkTextAttributes:self.linkTextAttributes;
             if (!attributes) {
                 attributes = @{NSForegroundColorAttributeName:kDefaultLinkColorForMLLinkLabel};
             }
@@ -481,7 +467,7 @@ static NSArray * kAllRegexps() {
     //加入它
     [self.links addObject:link];
     //重绘
-    [self resetSuperText];
+    [self reSetText];
     
     return YES;
 }
@@ -490,6 +476,11 @@ static NSArray * kAllRegexps() {
 {
     MLLink *link = [MLLink linkWithType:type value:value range:range];
     return [self addLink:link]?link:nil;
+}
+
+- (void)invalidateDisplayForLinks
+{
+    [self reSetText];
 }
 
 #pragma mark - 布局相关

@@ -61,13 +61,14 @@ typedef NS_ENUM(NSUInteger, MLLinkType) {
 @property (nonatomic, strong) NSDictionary *linkTextAttributes;
 @property (nonatomic, strong) NSDictionary *activeLinkTextAttributes;
 
-//这个主要是为了不会在点击非常快速结束触摸的情况下，激活的链接样式基本没体现，这里的delay可以让其多体验那个一会。
+//这个主要是为了不会在点击非常快速结束触摸的情况下，激活的链接样式基本没体现，这里的delay可以让其多体现那个一会，显得有反馈。
 //默认为0.3秒
 @property (nonatomic, assign) NSTimeInterval activeLinkToNilDelay;
 
 //是否允许在link内line break，默认为NO，即为不允许，这样的话链接会尽量的不换行
 @property (nonatomic, assign) BOOL allowLineBreakInsideLinks;
 
+//优先级比delegate高
 @property (nonatomic, copy) void(^didClickLinkBlock)(MLLink *link,NSString *linkText,MLLinkLabel *label);
 @property (nonatomic, copy) void(^didLongPressLinkBlock)(MLLink *link,NSString *linkText,MLLinkLabel *label);
 
@@ -77,24 +78,35 @@ typedef NS_ENUM(NSUInteger, MLLinkType) {
 
 - (MLLink *)linkAtPoint:(CGPoint)location;
 
+/**
+ *  设置文本后添加link。注意如果在此之后设置了text、attributedText、dataDetectorTypes或dataDetectorTypesOfAttributedLinkValue属性的话添加的link会丢失。
+ */
 - (BOOL)addLink:(MLLink*)link;
+/**
+ * 设置文本后添加link，注意如果在此之后设置了text、attributedText、dataDetectorTypes或dataDetectorTypesOfAttributedLinkValue属性的话添加的link会丢失。
+ */
 - (MLLink*)addLinkWithType:(MLLinkType)type value:(NSString*)value range:(NSRange)range;
 
 //下面俩是为了编写代码时候外部设置block时候不需要自定义名字了，方便。
 - (void)setDidClickLinkBlock:(void (^)(MLLink *link, NSString *linkText, MLLinkLabel *label))didClickLinkBlock;
 - (void)setDidLongPressLinkBlock:(void (^)(MLLink *link, NSString *linkText, MLLinkLabel *label))didLongPressLinkBlock;
 
+/**
+ *  一般用在修改了某些link的样式属性之后效果不会立马启用，使用此方法可启用。
+ */
+- (void)invalidateDisplayForLinks;
+
 @end
 
 @interface MLLink : NSObject
 
-@property (readonly, nonatomic, assign) MLLinkType linkType;
-@property (readonly, nonatomic, copy) NSString *linkValue;
+@property (nonatomic, assign) MLLinkType linkType;
+@property (nonatomic, copy) NSString *linkValue;
 @property (readonly, nonatomic, assign) NSRange linkRange;
 
 //可以单独设置且覆盖label的三个参数
-@property (readonly, nonatomic, strong) NSDictionary *linkTextAttributes;
-@property (readonly, nonatomic, strong) NSDictionary *activeLinkTextAttributes;
+@property (nonatomic, strong) NSDictionary *linkTextAttributes;
+@property (nonatomic, strong) NSDictionary *activeLinkTextAttributes;
 
 //初始化
 + (instancetype)linkWithType:(MLLinkType)type value:(NSString*)value range:(NSRange)range;
