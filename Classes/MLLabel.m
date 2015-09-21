@@ -208,8 +208,8 @@ static NSArray * kStylePropertyNames() {
 - (CGSize)textContainerSizeWithBoundsSize:(CGSize)size
 {
     //bounds改了之后，要相应的改变textContainer的size，但是要根据insets调整
-    CGFloat width = MAX(0, size.width-_textInsets.left-_textInsets.right);
-    CGFloat height = MAX(0, size.height-_textInsets.top-_textInsets.bottom);
+    CGFloat width = fmax(0, size.width-_textInsets.left-_textInsets.right);
+    CGFloat height = fmax(0, size.height-_textInsets.top-_textInsets.bottom);
     return CGSizeMake(width, height);
 }
 
@@ -306,10 +306,17 @@ static NSArray * kStylePropertyNames() {
 
 - (CGRect)textRectForBounds:(CGRect)bounds attributedString:(NSAttributedString*)attributedString limitedToNumberOfLines:(NSInteger)numberOfLines lineCount:(NSInteger*)lineCount
 {
+    //这种算是特殊情况，如果为空字符串，那就没必要必要了，也忽略textInset，这样比较合理
+    if (attributedString.length<=0) {
+        bounds.size = CGSizeZero;
+        return bounds;
+    }
+    
     CGSize newTextContainerSize = [self textContainerSizeWithBoundsSize:bounds.size];
     if (newTextContainerSize.width<=0||newTextContainerSize.height<=0){
         CGRect textBounds = CGRectZero;
-        textBounds.size = CGSizeMake(_textInsets.left+_textInsets.right, _textInsets.top+_textInsets.bottom);
+        textBounds.origin = bounds.origin;
+        textBounds.size = CGSizeMake(fmin(_textInsets.left+_textInsets.right,CGRectGetWidth(bounds)), fmin(_textInsets.top+_textInsets.bottom,CGRectGetHeight(bounds)));
         return textBounds;
     }
     
@@ -321,10 +328,12 @@ static NSArray * kStylePropertyNames() {
     textContainer.maximumNumberOfLines = numberOfLines;
     textContainer.lineBreakMode = _textContainer.lineBreakMode;
     textContainer.lineFragmentPadding = _textContainer.lineFragmentPadding;
+    
     MLLabelLayoutManager *layoutManager = [[MLLabelLayoutManager alloc]init];
     layoutManager.delegate = self;
-    [textStorage addLayoutManager:layoutManager];
     [layoutManager addTextContainer:textContainer];
+    
+    [textStorage addLayoutManager:layoutManager];
     
     NSRange glyphRange = [layoutManager glyphRangeForTextContainer:textContainer];
     
@@ -340,11 +349,11 @@ static NSArray * kStylePropertyNames() {
     //执行这个之前必须执行glyphRangeForTextContainer
     CGRect textBounds = [layoutManager usedRectForTextContainer:textContainer];
     
-    textBounds.size.width = MIN(ceilf(textBounds.size.width), newTextContainerSize.width);
-    textBounds.size.height = MIN(ceilf(textBounds.size.height), newTextContainerSize.height);
+    textBounds.size.width = fmin(ceilf(textBounds.size.width), newTextContainerSize.width);
+    textBounds.size.height = fmin(ceilf(textBounds.size.height), newTextContainerSize.height);
     textBounds.origin = bounds.origin;
     
-    textBounds.size = CGSizeMake(CGRectGetWidth(textBounds)+_textInsets.left+_textInsets.right, CGRectGetHeight(textBounds)+_textInsets.top+_textInsets.bottom);
+    textBounds.size = CGSizeMake(fmin(CGRectGetWidth(textBounds)+_textInsets.left+_textInsets.right,CGRectGetWidth(bounds)), fmin(CGRectGetHeight(textBounds)+_textInsets.top+_textInsets.bottom,CGRectGetHeight(bounds)));
     
 //    NSLog(@"bounds:%@ result:%@ %p",NSStringFromCGRect(bounds),NSStringFromCGRect(textBounds),self);
     return textBounds;
@@ -359,7 +368,7 @@ static NSArray * kStylePropertyNames() {
         mustReturnYES = YES;
     }
     //总得有个极限
-    scaleFactor = MAX(scaleFactor, ADJUST_MIN_SCALE_FACTOR);
+    scaleFactor = fmax(scaleFactor, ADJUST_MIN_SCALE_FACTOR);
     
     //遍历并且设置一个新的字体
     NSMutableAttributedString *attrStr = [originalAttributedText mutableCopy];
@@ -444,7 +453,7 @@ static NSArray * kStylePropertyNames() {
             }
             
             CGFloat textWidth = [self textRectForBounds:CGRectMake(0, 0, MLFLOAT_MAX, MLFLOAT_MAX) attributedString:attributedString limitedToNumberOfLines:0 lineCount:NULL].size.width;
-            textWidth = MAX(0, textWidth-_textInsets.left-_textInsets.right);
+            textWidth = fmax(0, textWidth-_textInsets.left-_textInsets.right);
             if (textWidth>0) {
                 CGFloat availableWidth = _textContainer.size.width*self.numberOfLines;
                 if (textWidth > availableWidth) {
@@ -515,7 +524,7 @@ static NSArray * kStylePropertyNames() {
         }
         
         CGFloat textWidth = [self textRectForBounds:CGRectMake(0, 0, MLFLOAT_MAX, MLFLOAT_MAX) attributedString:attributedString limitedToNumberOfLines:0 lineCount:NULL].size.width;
-        textWidth = MAX(0, textWidth-_textInsets.left-_textInsets.right);
+        textWidth = fmax(0, textWidth-_textInsets.left-_textInsets.right);
         if (textWidth>0) {
             CGFloat availableWidth = _textContainer.size.width*numberOfLines;
             if (textWidth > availableWidth) {
@@ -557,7 +566,7 @@ static NSArray * kStylePropertyNames() {
 - (CGSize)preferredSizeWithMaxWidth:(CGFloat)maxWidth
 {
     CGSize size = [self sizeThatFits:CGSizeMake(maxWidth, MLFLOAT_MAX)];
-    size.width = MIN(size.width, maxWidth); //在numberOfLine为1模式下返回的可能会比maxWidth大，所以这里我们限制下
+    size.width = fmin(size.width, maxWidth); //在numberOfLine为1模式下返回的可能会比maxWidth大，所以这里我们限制下
     return size;
 }
 
