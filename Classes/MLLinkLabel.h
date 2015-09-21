@@ -29,8 +29,8 @@ typedef NS_OPTIONS(NSUInteger, MLDataDetectorTypes) {
 
 typedef NS_ENUM(NSUInteger, MLLinkType) {
     MLLinkTypeNone          = 0,
-    MLLinkTypeURL           = 1,          // 电话
-    MLLinkTypePhoneNumber   = 2,          // 链接
+    MLLinkTypeURL           = 1,          // 链接
+    MLLinkTypePhoneNumber   = 2,          // 电话
     MLLinkTypeEmail         = 3,          // 邮箱
     MLLinkTypeUserHandle    = 4,          //@
     MLLinkTypeHashtag       = 5,          //#..#
@@ -46,6 +46,9 @@ typedef NS_ENUM(NSUInteger, MLLinkType) {
 @protocol MLLinkLabelDelegate <NSObject>
 
 - (void)didClickLink:(MLLink*)link linkText:(NSString*)linkText linkLabel:(MLLinkLabel*)linkLabel;
+
+@optional
+
 - (void)didLongPressLink:(MLLink*)link linkText:(NSString*)linkText linkLabel:(MLLinkLabel*)linkLabel;
 
 @end
@@ -65,7 +68,7 @@ typedef NS_ENUM(NSUInteger, MLLinkType) {
 //默认为0.3秒
 @property (nonatomic, assign) NSTimeInterval activeLinkToNilDelay;
 
-//是否允许在link内line break，默认为NO，即为不允许，这样的话链接会尽量的不换行
+//是否允许在link内line break，默认为YES，即为允许，这样的话链接会能折行就折行和正常文本一样
 @property (nonatomic, assign) BOOL allowLineBreakInsideLinks;
 
 //优先级比delegate高

@@ -158,9 +158,9 @@ REGULAREXPRESSION(HashtagRegularExpression, @"#([\\u4e00-\\u9fa5\\w\\-]+)")
     self.activeLinkToNilDelay = 0.3f;
     
     //默认除了话题和@都检测
-    self.dataDetectorTypes = MLDataDetectorTypeURL|MLDataDetectorTypePhoneNumber|MLDataDetectorTypeEmail|MLDataDetectorTypeAttributedLink;
-    self.dataDetectorTypesOfAttributedLinkValue = MLDataDetectorTypeNone;
-    self.allowLineBreakInsideLinks = NO;
+    _dataDetectorTypes = MLDataDetectorTypeURL|MLDataDetectorTypePhoneNumber|MLDataDetectorTypeEmail|MLDataDetectorTypeAttributedLink;
+    _dataDetectorTypesOfAttributedLinkValue = MLDataDetectorTypeNone;
+    _allowLineBreakInsideLinks = YES;
     
     [self addGestureRecognizer:self.longPressGestureRecognizer];
 }
@@ -506,7 +506,7 @@ static NSArray * kAllRegexps() {
         return YES;
     }
     
-    //让在链接区间下，尽量不beak
+    //让在链接区间下，尽量不break
     for (MLLink *link in self.links) {
         if (NSLocationInRange(charIndex,link.linkRange)) {
             return NO;
