@@ -95,6 +95,10 @@ typedef NS_ENUM(NSUInteger, MLLinkType) {
  * 设置文本后添加link，注意如果在此之后设置了text、attributedText、dataDetectorTypes或dataDetectorTypesOfAttributedLinkValue属性的话添加的link会丢失。
  */
 - (MLLink*)addLinkWithType:(MLLinkType)type value:(NSString*)value range:(NSRange)range;
+/**
+ * 设置文本后添加link，注意如果在此之后设置了text、attributedText、dataDetectorTypes或dataDetectorTypesOfAttributedLinkValue属性的话添加的link会丢失。
+ */
+- (NSArray*)addLinks:(NSArray*)links;
 
 //下面俩是为了编写代码时候外部设置block时候不需要自定义名字了，方便。
 - (void)setDidClickLinkBlock:(void (^)(MLLink *link, NSString *linkText, MLLinkLabel *label))didClickLinkBlock;
