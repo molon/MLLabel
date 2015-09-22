@@ -14,6 +14,7 @@
 @property (nonatomic, assign) CGFloat height;
 
 @property (nonatomic, assign) CGFloat lineHeightMultiple;
+@property (nonatomic, assign) CGFloat imageAspectRatio;
 
 @property (nonatomic, copy) UIImage * (^imageBlock)(CGRect imageBounds,NSTextContainer *textContainer,NSUInteger charIndex,MLTextAttachment *textAttachment);
 
@@ -31,10 +32,12 @@
 }
 
 + (instancetype)textAttachmentWithLineHeightMultiple:(CGFloat)lineHeightMultiple imageBlock:(UIImage * (^)(CGRect imageBounds,NSTextContainer *textContainer,NSUInteger charIndex,MLTextAttachment *textAttachment))imageBlock
+                                    imageAspectRatio:(CGFloat)imageAspectRatio
 {
     MLTextAttachment *textAttachment = [MLTextAttachment new];
     textAttachment.lineHeightMultiple = lineHeightMultiple;
     textAttachment.imageBlock = imageBlock;
+    textAttachment.imageAspectRatio = imageAspectRatio;
     return textAttachment;
 }
 
@@ -65,11 +68,8 @@
         
         if (self.lineHeightMultiple>0) {
             width = height = baseLineHeight*self.lineHeightMultiple;
-            if (self.imageBlock) {
-                UIImage *image = self.imageBlock(CGRectZero,textContainer,charIndex,self);
-                if (image) {
-                    width = height*(image.size.width/image.size.height);
-                }
+            if (self.imageAspectRatio>0) {
+                width = height*self.imageAspectRatio;
             }
         }else{
             if (width==0&&height==0) {

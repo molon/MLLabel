@@ -147,6 +147,7 @@ static NSArray * kStylePropertyNames() {
 {
     if (!_layoutManager) {
         _layoutManager = [MLLabelLayoutManager new];
+        _layoutManager.allowsNonContiguousLayout = NO;
         _layoutManager.delegate = self;
     }
     return _layoutManager;
