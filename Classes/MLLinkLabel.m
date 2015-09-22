@@ -158,9 +158,9 @@ REGULAREXPRESSION(HashtagRegularExpression, @"#([\\u4e00-\\u9fa5\\w\\-]+)")
     self.activeLinkToNilDelay = 0.3f;
     
     //默认除了话题和@都检测
-    self.dataDetectorTypes = MLDataDetectorTypeURL|MLDataDetectorTypePhoneNumber|MLDataDetectorTypeEmail|MLDataDetectorTypeAttributedLink;
-    self.dataDetectorTypesOfAttributedLinkValue = MLDataDetectorTypeNone;
-    self.allowLineBreakInsideLinks = NO;
+    _dataDetectorTypes = MLDataDetectorTypeURL|MLDataDetectorTypePhoneNumber|MLDataDetectorTypeEmail|MLDataDetectorTypeAttributedLink;
+    _dataDetectorTypesOfAttributedLinkValue = MLDataDetectorTypeNone;
+    _allowLineBreakInsideLinks = YES;
     
     [self addGestureRecognizer:self.longPressGestureRecognizer];
 }
@@ -461,33 +461,44 @@ static NSArray * kAllRegexps() {
 #pragma mark - 外部调用相关
 - (BOOL)addLink:(MLLink*)link
 {
-    if (!link||NSMaxRange(link.linkRange)>self.textStorage.length) {
-        return FALSE;
-    }
-    
-    //检测是否此位置已经有东西占用
-    for (MLLink *aLink in self.links){
-        if (NSMaxRange(NSIntersectionRange(aLink.linkRange, link.linkRange))>0){
-            return FALSE;
-        }
-    }
-    
-    if (self.beforeAddLinkBlock) {
-        self.beforeAddLinkBlock(link);
-    }
-    
-    //加入它
-    [self.links addObject:link];
-    //重绘
-    [self reSetText];
-    
-    return YES;
+    return [self addLinks:@[link]].count>0;
 }
 
 - (MLLink*)addLinkWithType:(MLLinkType)type value:(NSString*)value range:(NSRange)range
 {
     MLLink *link = [MLLink linkWithType:type value:value range:range];
     return [self addLink:link]?link:nil;
+}
+
+- (NSArray*)addLinks:(NSArray*)links
+{
+    NSMutableArray *validLinks = [NSMutableArray arrayWithCapacity:links.count];
+    for (MLLink *link in links) {
+        if (!link||NSMaxRange(link.linkRange)>self.textStorage.length) {
+            continue;
+        }
+        
+        //检测是否此位置已经有东西占用
+        for (MLLink *aLink in self.links){
+            if (NSMaxRange(NSIntersectionRange(aLink.linkRange, link.linkRange))>0){
+                continue;
+            }
+        }
+        
+        if (self.beforeAddLinkBlock) {
+            self.beforeAddLinkBlock(link);
+        }
+        
+        //加入它
+        [self.links addObject:link];
+        
+        [validLinks addObject:link];
+    }
+    
+    //重绘
+    [self reSetText];
+    
+    return validLinks;
 }
 
 - (void)invalidateDisplayForLinks
@@ -506,7 +517,7 @@ static NSArray * kAllRegexps() {
         return YES;
     }
     
-    //让在链接区间下，尽量不beak
+    //让在链接区间下，尽量不break
     for (MLLink *link in self.links) {
         if (NSLocationInRange(charIndex,link.linkRange)) {
             return NO;

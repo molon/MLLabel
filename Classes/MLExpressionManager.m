@@ -163,9 +163,11 @@
         if (imageName.length>0) {
             //加个表情到结果中
             NSString *imagePath = [expression.bundleName stringByAppendingPathComponent:imageName];
+            UIImage *image = [UIImage imageNamed:imagePath];
+            
             MLTextAttachment *textAttachment = [MLTextAttachment textAttachmentWithLineHeightMultiple:kExpressionLineHeightMultiple imageBlock:^UIImage *(CGRect imageBounds, NSTextContainer *textContainer, NSUInteger charIndex, MLTextAttachment *textAttachment) {
-                return [UIImage imageNamed:imagePath];
-            }];
+                return image;
+            } imageAspectRatio:image.size.width/image.size.height];
             [resultAttributedString appendAttributedString:[NSAttributedString attributedStringWithAttachment:textAttachment]];
         }else{
             //找不到对应图像名称就直接加上去

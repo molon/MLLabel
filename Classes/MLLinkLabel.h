@@ -29,8 +29,8 @@ typedef NS_OPTIONS(NSUInteger, MLDataDetectorTypes) {
 
 typedef NS_ENUM(NSUInteger, MLLinkType) {
     MLLinkTypeNone          = 0,
-    MLLinkTypeURL           = 1,          // 电话
-    MLLinkTypePhoneNumber   = 2,          // 链接
+    MLLinkTypeURL           = 1,          // 链接
+    MLLinkTypePhoneNumber   = 2,          // 电话
     MLLinkTypeEmail         = 3,          // 邮箱
     MLLinkTypeUserHandle    = 4,          //@
     MLLinkTypeHashtag       = 5,          //#..#
@@ -46,6 +46,9 @@ typedef NS_ENUM(NSUInteger, MLLinkType) {
 @protocol MLLinkLabelDelegate <NSObject>
 
 - (void)didClickLink:(MLLink*)link linkText:(NSString*)linkText linkLabel:(MLLinkLabel*)linkLabel;
+
+@optional
+
 - (void)didLongPressLink:(MLLink*)link linkText:(NSString*)linkText linkLabel:(MLLinkLabel*)linkLabel;
 
 @end
@@ -65,7 +68,7 @@ typedef NS_ENUM(NSUInteger, MLLinkType) {
 //默认为0.3秒
 @property (nonatomic, assign) NSTimeInterval activeLinkToNilDelay;
 
-//是否允许在link内line break，默认为NO，即为不允许，这样的话链接会尽量的不换行
+//是否允许在link内line break，默认为YES，即为允许，这样的话链接会能折行就折行和正常文本一样
 @property (nonatomic, assign) BOOL allowLineBreakInsideLinks;
 
 //优先级比delegate高
@@ -92,6 +95,10 @@ typedef NS_ENUM(NSUInteger, MLLinkType) {
  * 设置文本后添加link，注意如果在此之后设置了text、attributedText、dataDetectorTypes或dataDetectorTypesOfAttributedLinkValue属性的话添加的link会丢失。
  */
 - (MLLink*)addLinkWithType:(MLLinkType)type value:(NSString*)value range:(NSRange)range;
+/**
+ * 设置文本后添加link，注意如果在此之后设置了text、attributedText、dataDetectorTypes或dataDetectorTypesOfAttributedLinkValue属性的话添加的link会丢失。
+ */
+- (NSArray*)addLinks:(NSArray*)links;
 
 //下面俩是为了编写代码时候外部设置block时候不需要自定义名字了，方便。
 - (void)setDidClickLinkBlock:(void (^)(MLLink *link, NSString *linkText, MLLinkLabel *label))didClickLinkBlock;
