@@ -100,8 +100,6 @@
 //多线程转表情attrStr
 + (NSArray *)expressionAttributedStringsWithStrings:(NSArray*)strings expression:(MLExpression*)expression
 {
-    //由于MLExpression本身是只读的，而且其属性都是线程安全的，所以这里可以直接用
-    
     NSMutableDictionary *results = [NSMutableDictionary dictionaryWithCapacity:strings.count];
     
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
@@ -124,6 +122,36 @@
     }
 
     return resultArr;
+}
+
++ (void)expressionAttributedStringsWithStrings:(NSArray*)strings expression:(MLExpression*)expression callback:(void(^)(NSArray *result))callback
+{
+    NSMutableDictionary *results = [NSMutableDictionary dictionaryWithCapacity:strings.count];
+    
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_group_t group = dispatch_group_create();
+    for (id str in strings) {
+        dispatch_group_async(group, queue, ^{
+            NSAttributedString *result = [MLExpressionManager expressionAttributedStringWithString:str expression:expression];
+            
+            @synchronized(results){
+                results[str] = result;
+            }
+        });
+    }
+    
+    dispatch_group_notify(group, queue, ^{
+        //重新排列
+        NSMutableArray *resultArr = [NSMutableArray arrayWithCapacity:results.count];
+        for (id str in strings) {
+            [resultArr addObject:results[str]];
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (callback) {
+                callback(resultArr);
+            }
+        });
+    });
 }
 
 + (NSAttributedString*)expressionAttributedStringWithString:(id)string expression:(MLExpression*)expression {
