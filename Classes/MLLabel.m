@@ -58,8 +58,10 @@ static NSArray * kStylePropertyNames() {
 
 @property (nonatomic, strong) MLLabelStylePropertyRecord *styleRecord;
 
-//为什么需要这个，是因为setAttributedText之后内部可能会对其进行了改动，然后例如再次更新style属性，然后更新绘制会出问题。索性都以记录的为准。
-@property (nonatomic, strong) NSAttributedString *lastAttributedText;
+//为什么需要这个，是因为setAttributedText之后内部可能会对其进行了改动，然后例如再次更新style属性，然后更新绘制会出问题。索性都以记录的最原始的为准。
+@property (nonatomic, copy) NSAttributedString *lastAttributedText;
+//读取的时候需要
+@property (nonatomic, copy) NSString *lastText;
 
 @end
 
@@ -94,8 +96,11 @@ static NSArray * kStylePropertyNames() {
     [self.layoutManager addTextContainer:self.textContainer];
     
     //label helper相关
-    self.lastTextType = MLLastTextTypeNormal;
-    self.lastAttributedText = self.attributedText;
+    if ([super attributedText]) {
+        self.attributedText = [super attributedText];
+    }else{
+        self.text = [super text];
+    }
     
     //kvo 监视style属性
     for (NSString *key in kStylePropertyNames()) {
@@ -173,15 +178,32 @@ static NSArray * kStylePropertyNames() {
     return _styleRecord;
 }
 
+- (NSAttributedString *)attributedText
+{
+    return _lastTextType==MLLastTextTypeAttributed?_lastAttributedText:[self attributedTextForTextStorageFromLabelProperties];
+}
+
+- (NSString*)text
+{
+    return _lastTextType==MLLastTextTypeAttributed?_lastAttributedText.string:_lastText;
+}
 
 #pragma mark - set text
+- (void)setLastTextType:(MLLastTextType)lastTextType
+{
+    _lastTextType = lastTextType;
+    //重置下
+    self.lastText = nil;
+    self.lastAttributedText = nil;
+}
+
 - (void)setText:(NSString *)text
 {
     NSAssert(!text||[text isKindOfClass:[NSString class]], @"text must be NSString");
     
-    [super setText:text];
-    
     self.lastTextType = MLLastTextTypeNormal;
+    self.lastText = text;
+    //    [super setText:text];
     
     [_textStorage setAttributedString:[self attributedTextForTextStorageFromLabelProperties]];
     
@@ -193,10 +215,10 @@ static NSArray * kStylePropertyNames() {
 {
     NSAssert(!attributedText||[attributedText isKindOfClass:[NSAttributedString class]], @"text must be NSAttributedString");
     
-    [super setAttributedText:attributedText];
+    self.lastTextType = MLLastTextTypeAttributed;
     self.lastAttributedText = attributedText;
     
-    self.lastTextType = MLLastTextTypeAttributed;
+//    [super setAttributedText:attributedText];
     
     [_textStorage setAttributedString:[self attributedTextForTextStorageFromLabelProperties]];
     
@@ -217,7 +239,7 @@ static NSArray * kStylePropertyNames() {
 - (void)reSetText
 {
     if (_lastTextType == MLLastTextTypeNormal) {
-        self.text = self.text;
+        self.text = _lastText;
     }else{
         self.attributedText = _lastAttributedText;
     }
@@ -228,24 +250,24 @@ static NSArray * kStylePropertyNames() {
  */
 - (NSMutableAttributedString*)attributedTextForTextStorageFromLabelProperties
 {
-    if (self.lastTextType==MLLastTextTypeNormal) {
-        if (!self.text) {
+    if (_lastTextType==MLLastTextTypeNormal) {
+        if (!_lastText) {
             return [[NSMutableAttributedString alloc]initWithString:@""];
         }
         
-        //根据text和label默认的一些属性得到attributedText，实际上，在[super setText:xxx]之后，这种self.attributedText也会跟随改变成这种的，不过直接拿来用会有问题，这里我们自己搞一份一样的。
-        return [[NSMutableAttributedString alloc] initWithString:self.text attributes:[self attributesFromLabelProperties]];
+        //根据text和label默认的一些属性得到attributedText
+        return [[NSMutableAttributedString alloc] initWithString:_lastText attributes:[self attributesFromLabelProperties]];
     }
     
-    if (!self.lastAttributedText) {
+    if (!_lastAttributedText) {
         return [[NSMutableAttributedString alloc]initWithString:@""];
     }
     
     //遍历并且添加Label默认的属性
-    NSMutableAttributedString *newAttrStr = [[NSMutableAttributedString alloc]initWithString:self.lastAttributedText.string attributes:[self attributesFromLabelProperties]];
+    NSMutableAttributedString *newAttrStr = [[NSMutableAttributedString alloc]initWithString:_lastAttributedText.string attributes:[self attributesFromLabelProperties]];
     
     //TODO: 这里在属性多的时候比较耗费性能，回头得想个解决方案
-    [self.lastAttributedText enumerateAttributesInRange:NSMakeRange(0, newAttrStr.length) options:0 usingBlock:^(NSDictionary *attrs, NSRange range, BOOL *stop) {
+    [_lastAttributedText enumerateAttributesInRange:NSMakeRange(0, newAttrStr.length) options:0 usingBlock:^(NSDictionary *attrs, NSRange range, BOOL *stop) {
         if (attrs.count>0) {
 //            [newAttrStr removeAttributes:[attrs allKeys] range:range];
             [newAttrStr addAttributes:attrs range:range];
@@ -257,7 +279,7 @@ static NSArray * kStylePropertyNames() {
 - (NSDictionary *)attributesFromLabelProperties
 {
     //颜色
-    UIColor *color = _styleRecord.textColor;
+    UIColor *color = self.styleRecord.textColor;
     if (!_styleRecord.enabled)
     {
         color = [UIColor lightGrayColor];
@@ -487,10 +509,10 @@ static NSArray * kStylePropertyNames() {
     //因为label是默认垂直居中的，所以需要根据实际绘制区域的bounds来调整出居中的offset
     textOffset = [self textOffsetWithTextSize:drawBounds.size];
     
-    if (self.doBeforeDrawingTextBlock) {
+    if (_doBeforeDrawingTextBlock) {
         //而实际上drawBounds的宽度可能不是我们想要的，我们想要的是_textContainer的宽度，但是高度需要是真实绘制高度
         CGSize drawSize = CGSizeMake(_textContainer.size.width, drawBounds.size.height);
-        self.doBeforeDrawingTextBlock(rect,textOffset,drawSize);
+        _doBeforeDrawingTextBlock(rect,textOffset,drawSize);
     }
     
     //绘制文字
