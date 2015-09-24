@@ -26,5 +26,7 @@
 + (NSAttributedString*)expressionAttributedStringWithString:(id)string expression:(MLExpression*)expression;
 //给一个str数组，返回其对应的表情attrStr数组，顺序一致
 + (NSArray *)expressionAttributedStringsWithStrings:(NSArray*)strings expression:(MLExpression*)expression;
+//同上，但是以回调方式返回
++ (void)expressionAttributedStringsWithStrings:(NSArray*)strings expression:(MLExpression*)expression callback:(void(^)(NSArray *result))callback;
 
 @end
