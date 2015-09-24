@@ -27,7 +27,7 @@
     [super viewDidLoad];
     
     self.view.backgroundColor = [UIColor whiteColor];
-    self.title = @"ListNoNib(little higher performance)";
+    self.title = @"ListNoNib(wait 1.0sec)";
     
     [self.tableView registerClass:[ListNoNibTableViewCell class] forCellReuseIdentifier:[ListNoNibTableViewCell cellReuseIdentifier]];
     
