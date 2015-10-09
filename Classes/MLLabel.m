@@ -203,6 +203,8 @@ static NSArray * kStylePropertyNames() {
     
     self.lastTextType = MLLastTextTypeNormal;
     self.lastText = text;
+    
+    [self invalidateIntrinsicContentSize];
     //    [super setText:text];
     
     [_textStorage setAttributedString:[self attributedTextForTextStorageFromLabelProperties]];
@@ -218,6 +220,7 @@ static NSArray * kStylePropertyNames() {
     self.lastTextType = MLLastTextTypeAttributed;
     self.lastAttributedText = attributedText;
     
+    [self invalidateIntrinsicContentSize];
 //    [super setAttributedText:attributedText];
     
     [_textStorage setAttributedString:[self attributedTextForTextStorageFromLabelProperties]];
@@ -616,6 +619,8 @@ static NSArray * kStylePropertyNames() {
 {
     _textInsets = insets;
     [self resizeTextContainerSize];
+    
+    [self invalidateIntrinsicContentSize];
 }
 
 #pragma mark - set container相关属性
@@ -628,6 +633,7 @@ static NSArray * kStylePropertyNames() {
     _textContainer.maximumNumberOfLines = numberOfLines;
     
     if (isChanged) {
+        [self invalidateIntrinsicContentSize];
         [self setNeedsDisplay];
     }
 }
@@ -637,6 +643,8 @@ static NSArray * kStylePropertyNames() {
     [super setLineBreakMode:lineBreakMode];
     
     _textContainer.lineBreakMode = lineBreakMode;
+    
+    [self invalidateIntrinsicContentSize];
 }
 
 #pragma mark - set 其他
@@ -644,6 +652,7 @@ static NSArray * kStylePropertyNames() {
 {
     [super setMinimumScaleFactor:minimumScaleFactor];
     
+    [self invalidateIntrinsicContentSize];
     [self setNeedsDisplay];
 }
 
