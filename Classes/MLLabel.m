@@ -9,7 +9,6 @@
 #import "MLLabel.h"
 #import "NSMutableAttributedString+MLLabel.h"
 #import "MLLabelLayoutManager.h"
-#import "MLLabelTextStorage.h"
 #import "NSString+MLLabel.h"
 
 #define kAdjustFontSizeEveryScalingFactor (M_E / M_PI)
@@ -50,7 +49,7 @@ static NSArray * kStylePropertyNames() {
 
 @interface MLLabel()<NSLayoutManagerDelegate>
 
-@property (nonatomic, strong) MLLabelTextStorage *textStorage;
+@property (nonatomic, strong) NSTextStorage *textStorage;
 @property (nonatomic, strong) MLLabelLayoutManager *layoutManager;
 @property (nonatomic, strong) NSTextContainer *textContainer;
 
@@ -140,10 +139,10 @@ static NSArray * kStylePropertyNames() {
 
 
 #pragma mark - getter
-- (MLLabelTextStorage *)textStorage
+- (NSTextStorage *)textStorage
 {
     if (!_textStorage) {
-        _textStorage = [MLLabelTextStorage new];
+        _textStorage = [NSTextStorage new];
     }
     return _textStorage;
 }
@@ -221,13 +220,13 @@ static NSArray * kStylePropertyNames() {
     self.lastAttributedText = attributedText;
     
     [self invalidateIntrinsicContentSize];
-//    [super setAttributedText:attributedText];
+    //    [super setAttributedText:attributedText];
     
     [_textStorage setAttributedString:[self attributedTextForTextStorageFromLabelProperties]];
     
     //如果text和原本的一样的话 super 是不会触发redraw的，但是很遗憾我们的label比较灵活，验证起来很麻烦，所以还是都重绘吧
     [self setNeedsDisplay];
-//    NSLog(@"set attr text %p",self);
+    //    NSLog(@"set attr text %p",self);
 }
 
 #pragma mark - common helper
@@ -269,10 +268,9 @@ static NSArray * kStylePropertyNames() {
     //遍历并且添加Label默认的属性
     NSMutableAttributedString *newAttrStr = [[NSMutableAttributedString alloc]initWithString:_lastAttributedText.string attributes:[self attributesFromLabelProperties]];
     
-    //TODO: 这里在属性多的时候比较耗费性能，回头得想个解决方案
     [_lastAttributedText enumerateAttributesInRange:NSMakeRange(0, newAttrStr.length) options:0 usingBlock:^(NSDictionary *attrs, NSRange range, BOOL *stop) {
         if (attrs.count>0) {
-//            [newAttrStr removeAttributes:[attrs allKeys] range:range];
+            //            [newAttrStr removeAttributes:[attrs allKeys] range:range];
             [newAttrStr addAttributes:attrs range:range];
         }
     }];
@@ -346,42 +344,48 @@ static NSArray * kStylePropertyNames() {
         return textBounds;
     }
     
-    //TODO: 最好回头把重复赋值和初始化这些工作也给减掉，尝试是否能提高性能
-    MLLabelTextStorage *textStorage = [MLLabelTextStorage new];
-    [textStorage setAttributedString:attributedString];
-    
-    NSTextContainer *textContainer = [[NSTextContainer alloc]initWithSize:newTextContainerSize];
-    textContainer.maximumNumberOfLines = numberOfLines;
-    textContainer.lineBreakMode = _textContainer.lineBreakMode;
-    textContainer.lineFragmentPadding = _textContainer.lineFragmentPadding;
-    
-    MLLabelLayoutManager *layoutManager = [[MLLabelLayoutManager alloc]init];
-    layoutManager.delegate = self;
-    [layoutManager addTextContainer:textContainer];
-    
-    [textStorage addLayoutManager:layoutManager];
-    
-    NSRange glyphRange = [layoutManager glyphRangeForTextContainer:textContainer];
-    
-    if (lineCount) {
-        [layoutManager enumerateLineFragmentsForGlyphRange:glyphRange usingBlock:^(CGRect rect, CGRect usedRect, NSTextContainer *textContainer, NSRange glyphRange, BOOL *stop) {
-            (*lineCount)++;
-        }];
-        //在最后字符为换行符的情况下，实际绘制出来的是会多那个一行，这里作为AppleBUG修正
-        if ([textStorage.string isNewlineCharacterAtEnd]) {
-            (*lineCount)++;
+    CGRect textBounds = CGRectZero;
+    @autoreleasepool {
+        CGSize savedTextContainerSize = _textContainer.size;
+        NSInteger savedTextContainerNumberOfLines = _textContainer.maximumNumberOfLines;
+        
+        _textContainer.size = newTextContainerSize;
+        _textContainer.maximumNumberOfLines = numberOfLines;
+        
+        NSAttributedString *savedAttributedString = nil;
+        if (![_textStorage isEqual:attributedString]) {
+            savedAttributedString = [_textStorage copy];
+            [_textStorage setAttributedString:attributedString];
         }
+        
+        NSRange glyphRange = [_layoutManager glyphRangeForTextContainer:_textContainer];
+        if (lineCount) {
+            [_layoutManager enumerateLineFragmentsForGlyphRange:glyphRange usingBlock:^(CGRect rect, CGRect usedRect, NSTextContainer *textContainer, NSRange glyphRange, BOOL *stop) {
+                (*lineCount)++;
+            }];
+            //在最后字符为换行符的情况下，实际绘制出来的是会多那个一行，这里作为AppleBUG修正
+            if ([_textStorage.string isNewlineCharacterAtEnd]) {
+                (*lineCount)++;
+            }
+        }
+        
+        textBounds = [_layoutManager usedRectForTextContainer:_textContainer];
+        
+        //还原
+        if (savedAttributedString) {
+            [_textStorage setAttributedString:savedAttributedString];
+        }
+        _textContainer.size = savedTextContainerSize;
+        _textContainer.maximumNumberOfLines = savedTextContainerNumberOfLines;
     }
-    //执行这个之前必须执行glyphRangeForTextContainer
-    CGRect textBounds = [layoutManager usedRectForTextContainer:textContainer];
-    
-    textBounds.size.width = fmin(ceilf(textBounds.size.width), newTextContainerSize.width);
+    //最终修正
+    textBounds.size.width =  fmin(ceilf(textBounds.size.width), newTextContainerSize.width);
     textBounds.size.height = fmin(ceilf(textBounds.size.height), newTextContainerSize.height);
     textBounds.origin = bounds.origin;
     
     textBounds.size = CGSizeMake(fmin(CGRectGetWidth(textBounds)+_textInsets.left+_textInsets.right,CGRectGetWidth(bounds)), fmin(CGRectGetHeight(textBounds)+_textInsets.top+_textInsets.bottom,CGRectGetHeight(bounds)));
     
-//    NSLog(@"bounds:%@ result:%@ %p",NSStringFromCGRect(bounds),NSStringFromCGRect(textBounds),self);
+    //    NSLog(@"bounds:%@ result:%@ %p",NSStringFromCGRect(bounds),NSStringFromCGRect(textBounds),self);
     return textBounds;
 }
 
@@ -410,7 +414,7 @@ static NSArray * kStylePropertyNames() {
                 }
                 UIFont *newFont = [UIFont fontWithName:fontName size:newSize];
                 
-//                [attrStr removeAttribute:NSFontAttributeName range:range];
+                //                [attrStr removeAttribute:NSFontAttributeName range:range];
                 [attrStr addAttribute:NSFontAttributeName value:newFont range:range];
             }
         }];
@@ -450,7 +454,7 @@ static NSArray * kStylePropertyNames() {
 
 - (void)drawTextInRect:(CGRect)rect
 {
-//    NSLog(@"draw text %p",self);
+    //    NSLog(@"draw text %p",self);
     //不调用super方法
     //            [super drawTextInRect:rect]; //这里调用可以查看是否绘制和原来的不一致
     
@@ -535,6 +539,22 @@ static NSArray * kStylePropertyNames() {
     return textOffset;
 }
 
+
+//- (NSUInteger)layoutManager:(NSLayoutManager *)layoutManager
+//       shouldGenerateGlyphs:(const CGGlyph *)glyphs
+//                 properties:(const NSGlyphProperty *)props
+//           characterIndexes:(const NSUInteger *)charIndexes
+//                       font:(UIFont *)aFont
+//              forGlyphRange:(NSRange)glyphRange
+//{
+//    NSLog(@"shouldGenerateGlyphs:  start:%ld end:%ld",*charIndexes,charIndexes[glyphRange.length-1]);
+////    if (*charIndexes>=100) {
+////        return 0;
+////    }
+//    [layoutManager setGlyphs:glyphs properties:props characterIndexes:charIndexes font:aFont forGlyphRange:glyphRange];
+//    return glyphRange.length;
+//}
+
 #pragma mark - sizeThatsFit
 - (CGRect)textRectForBounds:(CGRect)bounds limitedToNumberOfLines:(NSInteger)numberOfLines
 {
@@ -569,7 +589,7 @@ static NSArray * kStylePropertyNames() {
             return textBounds;
         }
     }
-    return  [self textRectForBounds:bounds attributedString:[self attributedTextForTextStorageFromLabelProperties] limitedToNumberOfLines:numberOfLines lineCount:NULL];
+    return  [self textRectForBounds:bounds attributedString:_textStorage limitedToNumberOfLines:numberOfLines lineCount:NULL];
 }
 
 - (CGSize)sizeThatFits:(CGSize)size
@@ -596,11 +616,12 @@ static NSArray * kStylePropertyNames() {
     return size;
 }
 
-#pragma mark - 其他的set更新
 #pragma mark - set 修改container size相关
 - (void)resizeTextContainerSize
 {
-    _textContainer.size = [self textContainerSizeWithBoundsSize:self.bounds.size];
+    if (_textContainer) {
+        _textContainer.size = [self textContainerSizeWithBoundsSize:self.bounds.size];
+    }
 }
 
 - (void)setFrame:(CGRect)frame
