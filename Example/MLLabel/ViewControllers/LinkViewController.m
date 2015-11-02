@@ -45,10 +45,11 @@
     self.label.textAlignment = NSTextAlignmentCenter;
     self.label.textInsets = UIEdgeInsetsMake(5, 5, 5, 5);
     self.label.lineHeightMultiple = 1.0f;
+    self.label.lineSpacing = 0.0f;
     LABEL.beforeAddLinkBlock = nil;
     self.label.text = @"人生若只如初见，http://g.cn何事秋风悲http://baidu.com画扇。等闲变却故人心，dudl@qq.com却道故人心易变。13612341234骊山语罢清宵半，泪雨零铃终不怨。#何如 薄幸@锦衣郎，比翼连枝当日愿。";
     LABEL.dataDetectorTypes = MLDataDetectorTypeAll;
-    LABEL.allowLineBreakInsideLinks = NO;
+    LABEL.allowLineBreakInsideLinks = YES;
     LABEL.linkTextAttributes = nil;
     LABEL.activeLinkTextAttributes = nil;
     
@@ -59,7 +60,9 @@
     
     if (result==0) {
     }else if (result==1) {
+        //测试绘制背景色不会受到行间距设置的影响
         self.label.lineHeightMultiple = 1.5f;
+        self.label.lineSpacing = 10.0f;
     }else if (result==2) {
         //测试更改链接样式
         self.label.textColor = [UIColor blueColor];

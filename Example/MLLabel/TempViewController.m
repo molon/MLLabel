@@ -9,6 +9,7 @@
 #import "TempViewController.h"
 #import <MLLinkLabel.h>
 
+//为了解决issue https://github.com/molon/MLLabel/issues/20 的测试代码
 @interface TempViewController()
 
 @property (nonatomic, strong) MLLinkLabel *textLabel;
