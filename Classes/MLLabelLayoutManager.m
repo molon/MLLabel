@@ -23,7 +23,6 @@
     self.lastDrawPoint = CGPointZero;
 }
 
-//为了由于word-wrap或者center align产生的每行的空白区域不绘制上背景色，所以重载的。
 - (void)fillBackgroundRectArray:(const CGRect *)rectArray count:(NSUInteger)rectCount forCharacterRange:(NSRange)charRange color:(UIColor *)color
 {
     CGContextRef ctx = UIGraphicsGetCurrentContext();
@@ -42,9 +41,37 @@
         
         NSRange lineRange = NSMakeRange(glyphRange.location, 1);
         while (NSMaxRange(lineRange)<=NSMaxRange(glyphRange)) {
+            
+            //这里可以防止这行没有用到的区域也绘制上背景色，例如收到word wrap，center alignment影响后每行文字没有占满时候
             CGRect lineBounds = [self lineFragmentUsedRectForGlyphAtIndex:lineRange.location effectiveRange:&lineRange];
             lineBounds.origin.x += textOffset.x;
             lineBounds.origin.y += textOffset.y;
+            
+            //找到这行具有背景色文字区域的位置
+            NSRange glyphRangeInLine = NSIntersectionRange(glyphRange,lineRange);
+            
+            CGFloat startDrawY = CGFLOAT_MAX;
+            CGFloat maxLineHeight = 0.0f; //找到这行的 背景色区间 的文字的最小Y值和最大的文字高度
+            for (NSInteger glyphIndex = glyphRangeInLine.location; glyphIndex<=NSMaxRange(glyphRangeInLine); glyphIndex++) {
+                NSInteger charIndex = [self characterIndexForGlyphAtIndex:glyphIndex];
+                UIFont *font = [self.textStorage attribute:NSFontAttributeName
+                                                   atIndex:charIndex
+                                            effectiveRange:nil];
+                //找到这个字的绘制位置
+                CGPoint location = [self locationForGlyphAtIndex:glyphIndex];
+                startDrawY = fmin(startDrawY, lineBounds.origin.y+location.y-font.ascender);
+                maxLineHeight = fmax(maxLineHeight, font.lineHeight);
+            }
+            
+            CGSize size = lineBounds.size;
+            CGPoint orgin = lineBounds.origin;
+            
+            //调整下高度和绘制y值，这样做的目的是为了不会收到lineHeightMultiple和lineSpcing的影响，引起背景色绘制过高不工整
+            orgin.y = startDrawY;
+            size.height = maxLineHeight;
+            
+            lineBounds.size = size;
+            lineBounds.origin = orgin;
             
             for (NSInteger i=0; i<rectCount; i++) {
                 //找到相交的区域并且绘制
