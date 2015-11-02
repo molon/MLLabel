@@ -9,9 +9,7 @@
 #import "MLLabel.h"
 #import "NSMutableAttributedString+MLLabel.h"
 #import "MLLabelLayoutManager.h"
-#import "MLLabelTextStorage.h"
 #import "NSString+MLLabel.h"
-#import "MLLabelTextContainer.h"
 
 #define kAdjustFontSizeEveryScalingFactor (M_E / M_PI)
 //总得有个极限
@@ -51,7 +49,7 @@ static NSArray * kStylePropertyNames() {
 
 @interface MLLabel()<NSLayoutManagerDelegate>
 
-@property (nonatomic, strong) MLLabelTextStorage *textStorage;
+@property (nonatomic, strong) NSTextStorage *textStorage;
 @property (nonatomic, strong) MLLabelLayoutManager *layoutManager;
 @property (nonatomic, strong) NSTextContainer *textContainer;
 
@@ -141,10 +139,10 @@ static NSArray * kStylePropertyNames() {
 
 
 #pragma mark - getter
-- (MLLabelTextStorage *)textStorage
+- (NSTextStorage *)textStorage
 {
     if (!_textStorage) {
-        _textStorage = [MLLabelTextStorage new];
+        _textStorage = [NSTextStorage new];
     }
     return _textStorage;
 }
@@ -270,7 +268,6 @@ static NSArray * kStylePropertyNames() {
     //遍历并且添加Label默认的属性
     NSMutableAttributedString *newAttrStr = [[NSMutableAttributedString alloc]initWithString:_lastAttributedText.string attributes:[self attributesFromLabelProperties]];
     
-    //TODO: 这里在属性多的时候比较耗费性能，回头得想个解决方案
     [_lastAttributedText enumerateAttributesInRange:NSMakeRange(0, newAttrStr.length) options:0 usingBlock:^(NSDictionary *attrs, NSRange range, BOOL *stop) {
         if (attrs.count>0) {
 //            [newAttrStr removeAttributes:[attrs allKeys] range:range];
@@ -347,36 +344,34 @@ static NSArray * kStylePropertyNames() {
         return textBounds;
     }
     
-    //TODO: 最好回头把重复赋值和初始化这些工作也给减掉，尝试是否能提高性能
-    MLLabelTextStorage *textStorage = [MLLabelTextStorage new];
-    [textStorage setAttributedString:attributedString];
+    CGSize savedTextContainerSize = _textContainer.size;
+    NSInteger savedTextContainerNumberOfLines = _textContainer.maximumNumberOfLines;
+    NSAttributedString *savedAttributedString = [_textStorage copy];
     
-    NSTextContainer *textContainer = [[NSTextContainer alloc]initWithSize:newTextContainerSize];
-    textContainer.maximumNumberOfLines = numberOfLines;
-    textContainer.lineBreakMode = _textContainer.lineBreakMode;
-    textContainer.lineFragmentPadding = _textContainer.lineFragmentPadding;
+    _textContainer.size = newTextContainerSize;
+    _textContainer.maximumNumberOfLines = numberOfLines;
+    [_textStorage setAttributedString:attributedString];
     
-    MLLabelLayoutManager *layoutManager = [[MLLabelLayoutManager alloc]init];
-    layoutManager.delegate = self;
-    [layoutManager addTextContainer:textContainer];
-    
-    [textStorage addLayoutManager:layoutManager];
-    
-    NSRange glyphRange = [layoutManager glyphRangeForTextContainer:textContainer];
-    
+    NSRange glyphRange = [_layoutManager glyphRangeForTextContainer:_textContainer];
     if (lineCount) {
-        [layoutManager enumerateLineFragmentsForGlyphRange:glyphRange usingBlock:^(CGRect rect, CGRect usedRect, NSTextContainer *textContainer, NSRange glyphRange, BOOL *stop) {
+        [_layoutManager enumerateLineFragmentsForGlyphRange:glyphRange usingBlock:^(CGRect rect, CGRect usedRect, NSTextContainer *textContainer, NSRange glyphRange, BOOL *stop) {
             (*lineCount)++;
         }];
         //在最后字符为换行符的情况下，实际绘制出来的是会多那个一行，这里作为AppleBUG修正
-        if ([textStorage.string isNewlineCharacterAtEnd]) {
+        if ([_textStorage.string isNewlineCharacterAtEnd]) {
             (*lineCount)++;
         }
     }
-    //执行这个之前必须执行glyphRangeForTextContainer
-    CGRect textBounds = [layoutManager usedRectForTextContainer:textContainer];
     
-    textBounds.size.width = fmin(ceilf(textBounds.size.width), newTextContainerSize.width);
+    CGRect textBounds = [_layoutManager usedRectForTextContainer:_textContainer];
+    
+    //还原
+    [_textStorage setAttributedString:savedAttributedString];
+    _textContainer.size = savedTextContainerSize;
+    _textContainer.maximumNumberOfLines = savedTextContainerNumberOfLines;
+    
+    //最终修正
+    textBounds.size.width =  fmin(ceilf(textBounds.size.width), newTextContainerSize.width);
     textBounds.size.height = fmin(ceilf(textBounds.size.height), newTextContainerSize.height);
     textBounds.origin = bounds.origin;
     
@@ -613,11 +608,12 @@ static NSArray * kStylePropertyNames() {
     return size;
 }
 
-#pragma mark - 其他的set更新
 #pragma mark - set 修改container size相关
 - (void)resizeTextContainerSize
 {
-    _textContainer.size = [self textContainerSizeWithBoundsSize:self.bounds.size];
+    if (_textContainer) {
+        _textContainer.size = [self textContainerSizeWithBoundsSize:self.bounds.size];
+    }
 }
 
 - (void)setFrame:(CGRect)frame
