@@ -49,29 +49,37 @@
             
             //找到这行具有背景色文字区域的位置
             NSRange glyphRangeInLine = NSIntersectionRange(glyphRange,lineRange);
-            
-            CGFloat startDrawY = CGFLOAT_MAX;
-            CGFloat maxLineHeight = 0.0f; //找到这行的 背景色区间 的文字的最小Y值和最大的文字高度
-            for (NSInteger glyphIndex = glyphRangeInLine.location; glyphIndex<=NSMaxRange(glyphRangeInLine); glyphIndex++) {
-                NSInteger charIndex = [self characterIndexForGlyphAtIndex:glyphIndex];
-                UIFont *font = [self.textStorage attribute:NSFontAttributeName
-                                                   atIndex:charIndex
-                                            effectiveRange:nil];
-                //找到这个字的绘制位置
-                CGPoint location = [self locationForGlyphAtIndex:glyphIndex];
-                startDrawY = fmin(startDrawY, lineBounds.origin.y+location.y-font.ascender);
-                maxLineHeight = fmax(maxLineHeight, font.lineHeight);
+            NSRange truncatedGlyphRange = [self truncatedGlyphRangeInLineFragmentForGlyphAtIndex:glyphRangeInLine.location];
+            if (truncatedGlyphRange.location!=NSNotFound) {
+                //这里的glyphRangeInLine本身会带有被省略的区间，而我们下面计算最大行高和最小drawY的实现是不需要考虑省略的区间的，否则也可能计算有误。所以这里我们给过滤掉
+                glyphRangeInLine = NSMakeRange(glyphRangeInLine.location, truncatedGlyphRange.location-glyphRangeInLine.location);
             }
             
-            CGSize size = lineBounds.size;
-            CGPoint orgin = lineBounds.origin;
-            
-            //调整下高度和绘制y值，这样做的目的是为了不会收到lineHeightMultiple和lineSpcing的影响，引起背景色绘制过高不工整
-            orgin.y = startDrawY;
-            size.height = maxLineHeight;
-            
-            lineBounds.size = size;
-            lineBounds.origin = orgin;
+            if (glyphRangeInLine.length>0) {
+                CGFloat startDrawY = CGFLOAT_MAX;
+                CGFloat maxLineHeight = 0.0f; //找到这行的 背景色区间 的文字的最小Y值和最大的文字高度
+                for (NSInteger glyphIndex = glyphRangeInLine.location; glyphIndex<NSMaxRange(glyphRangeInLine); glyphIndex++) {
+                    NSInteger charIndex = [self characterIndexForGlyphAtIndex:glyphIndex];
+                    UIFont *font = [self.textStorage attribute:NSFontAttributeName
+                                                       atIndex:charIndex
+                                                effectiveRange:nil];
+                    //找到这个字的绘制位置
+                    CGPoint location = [self locationForGlyphAtIndex:glyphIndex];
+                    startDrawY = fmin(startDrawY, lineBounds.origin.y+location.y-font.ascender);
+                    //                NSLog(@"char:%@ lineHeight:%lf",[self.textStorage.string substringWithRange:[self.textStorage.string rangeOfComposedCharacterSequenceAtIndex:charIndex]],font.lineHeight);
+                    maxLineHeight = fmax(maxLineHeight, font.lineHeight);
+                }
+                
+                CGSize size = lineBounds.size;
+                CGPoint orgin = lineBounds.origin;
+                
+                //调整下高度和绘制y值，这样做的目的是为了不会收到lineHeightMultiple和lineSpcing的影响，引起背景色绘制过高不工整
+                orgin.y = startDrawY;
+                size.height = maxLineHeight;
+                
+                lineBounds.size = size;
+                lineBounds.origin = orgin;
+            }
             
             for (NSInteger i=0; i<rectCount; i++) {
                 //找到相交的区域并且绘制
