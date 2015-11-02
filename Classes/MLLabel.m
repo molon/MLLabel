@@ -346,11 +346,15 @@ static NSArray * kStylePropertyNames() {
     
     CGSize savedTextContainerSize = _textContainer.size;
     NSInteger savedTextContainerNumberOfLines = _textContainer.maximumNumberOfLines;
-    NSAttributedString *savedAttributedString = [_textStorage copy];
     
     _textContainer.size = newTextContainerSize;
     _textContainer.maximumNumberOfLines = numberOfLines;
-    [_textStorage setAttributedString:attributedString];
+    
+    NSAttributedString *savedAttributedString = nil;
+    if (![_textStorage isEqual:attributedString]) {
+        savedAttributedString = [_textStorage copy];
+        [_textStorage setAttributedString:attributedString];
+    }
     
     NSRange glyphRange = [_layoutManager glyphRangeForTextContainer:_textContainer];
     if (lineCount) {
@@ -366,7 +370,9 @@ static NSArray * kStylePropertyNames() {
     CGRect textBounds = [_layoutManager usedRectForTextContainer:_textContainer];
     
     //还原
-    [_textStorage setAttributedString:savedAttributedString];
+    if (savedAttributedString) {
+        [_textStorage setAttributedString:savedAttributedString];
+    }
     _textContainer.size = savedTextContainerSize;
     _textContainer.maximumNumberOfLines = savedTextContainerNumberOfLines;
     
@@ -581,7 +587,7 @@ static NSArray * kStylePropertyNames() {
             return textBounds;
         }
     }
-    return  [self textRectForBounds:bounds attributedString:[self attributedTextForTextStorageFromLabelProperties] limitedToNumberOfLines:numberOfLines lineCount:NULL];
+    return  [self textRectForBounds:bounds attributedString:_textStorage limitedToNumberOfLines:numberOfLines lineCount:NULL];
 }
 
 - (CGSize)sizeThatFits:(CGSize)size
