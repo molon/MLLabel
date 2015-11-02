@@ -11,6 +11,7 @@
 #import "MLLabelLayoutManager.h"
 #import "MLLabelTextStorage.h"
 #import "NSString+MLLabel.h"
+#import "MLLabelTextContainer.h"
 
 #define kAdjustFontSizeEveryScalingFactor (M_E / M_PI)
 //总得有个极限
@@ -534,6 +535,22 @@ static NSArray * kStylePropertyNames() {
     
     return textOffset;
 }
+
+
+//- (NSUInteger)layoutManager:(NSLayoutManager *)layoutManager
+//       shouldGenerateGlyphs:(const CGGlyph *)glyphs
+//                 properties:(const NSGlyphProperty *)props
+//           characterIndexes:(const NSUInteger *)charIndexes
+//                       font:(UIFont *)aFont
+//              forGlyphRange:(NSRange)glyphRange
+//{
+//    NSLog(@"shouldGenerateGlyphs:  start:%ld end:%ld",*charIndexes,charIndexes[glyphRange.length-1]);
+////    if (*charIndexes>=100) {
+////        return 0;
+////    }
+//    [layoutManager setGlyphs:glyphs properties:props characterIndexes:charIndexes font:aFont forGlyphRange:glyphRange];
+//    return glyphRange.length;
+//}
 
 #pragma mark - sizeThatsFit
 - (CGRect)textRectForBounds:(CGRect)bounds limitedToNumberOfLines:(NSInteger)numberOfLines

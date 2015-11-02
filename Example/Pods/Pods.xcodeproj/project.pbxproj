@@ -12,6 +12,7 @@
 		09106B9D2B4D473D05A6D82A /* NSAttributedString+MLExpression.m in Sources */ = {isa = PBXBuildFile; fileRef = 4E15883945915B440D7B68DC /* NSAttributedString+MLExpression.m */; };
 		1EAB1000D9E557AC7F183971 /* MLLabelLayoutManager.h in Headers */ = {isa = PBXBuildFile; fileRef = D8A75543117734F691B43C5E /* MLLabelLayoutManager.h */; };
 		305D7049A27A92C411C1270B /* MLLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = 15708CB301F2490E0A776A77 /* MLLabel.h */; };
+		36BC1ABB1BE7396A006E624C /* MLLabelTextContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = 36BC1ABA1BE7396A006E624C /* MLLabelTextContainer.m */; };
 		3B60DF4C7792F7FD5A2B56D6 /* NSString+MLExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = CE1A18BCFD1B0B5B966374FA /* NSString+MLExpression.h */; };
 		3BBA0FFB8797E6D5AED4EBED /* NSAttributedString+MLLabel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3C6C212F1C63C0A95D9CDFE6 /* NSAttributedString+MLLabel.h */; };
 		3F5224C166A47225B0AAE864 /* NSAttributedString+MLExpression.h in Headers */ = {isa = PBXBuildFile; fileRef = 86D7E944FD2CF5C638686279 /* NSAttributedString+MLExpression.h */; };
@@ -54,6 +55,8 @@
 		256FA527D072ABC5B3E41FED /* Podfile */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		29447AC56815CB119C755823 /* MLLabel+Override.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "MLLabel+Override.h"; sourceTree = "<group>"; };
 		2CECD952FAA565B470B6E64A /* MLExpressionManager.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = MLExpressionManager.h; sourceTree = "<group>"; };
+		36BC1AB91BE7396A006E624C /* MLLabelTextContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MLLabelTextContainer.h; sourceTree = "<group>"; };
+		36BC1ABA1BE7396A006E624C /* MLLabelTextContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MLLabelTextContainer.m; sourceTree = "<group>"; };
 		3C6C212F1C63C0A95D9CDFE6 /* NSAttributedString+MLLabel.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "NSAttributedString+MLLabel.h"; sourceTree = "<group>"; };
 		4E15883945915B440D7B68DC /* NSAttributedString+MLExpression.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "NSAttributedString+MLExpression.m"; sourceTree = "<group>"; };
 		62820C10AE9230A78B354B5B /* Pods-environment.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-environment.h"; sourceTree = "<group>"; };
@@ -124,6 +127,8 @@
 				747A060ED6C21C75569B59EB /* MLExpressionManager.m */,
 				15708CB301F2490E0A776A77 /* MLLabel.h */,
 				E868DE929BE6AD700FF5E2BD /* MLLabel.m */,
+				36BC1AB91BE7396A006E624C /* MLLabelTextContainer.h */,
+				36BC1ABA1BE7396A006E624C /* MLLabelTextContainer.m */,
 				29447AC56815CB119C755823 /* MLLabel+Override.h */,
 				D8A75543117734F691B43C5E /* MLLabelLayoutManager.h */,
 				B125772DDDA22E3BEA25E11B /* MLLabelLayoutManager.m */,
@@ -316,6 +321,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				36BC1ABB1BE7396A006E624C /* MLLabelTextContainer.m in Sources */,
 				B961736F1E190F5C281A9308 /* Pods-dummy.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
