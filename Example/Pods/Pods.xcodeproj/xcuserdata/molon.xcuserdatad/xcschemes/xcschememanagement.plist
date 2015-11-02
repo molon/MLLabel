@@ -4,7 +4,7 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>Pods-MLLabel.xcscheme</key>
+		<key>MLLabel.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -17,12 +17,12 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>840611ED664FF438F79A4E0F</key>
+		<key>86F7DF44A71028967AC1E870AA7CF40B</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>B84CD55F82CA599E2D986B67</key>
+		<key>A13C2021CDCA2F53EED207CA354BA810</key>
 		<dict>
 			<key>primary</key>
 			<true/>

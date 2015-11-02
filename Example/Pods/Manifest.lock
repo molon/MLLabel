@@ -1,5 +1,5 @@
 PODS:
-  - MLLabel (1.0)
+  - MLLabel (2.0.0)
 
 DEPENDENCIES:
   - MLLabel (from `../`)
@@ -9,6 +9,6 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  MLLabel: 85efdca66c5e3f31c80e784ecc49e79732e83499
+  MLLabel: 7afbad91efb273ee0ce28b2205af7073407eff2b
 
-COCOAPODS: 0.37.2
+COCOAPODS: 0.39.0
