@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import "IndexTableViewController.h"
+#import "TempViewController.h"
 
 @interface AppDelegate ()
 
@@ -22,7 +23,7 @@
     // Override point for customization after application launch.
     self.window.backgroundColor = [UIColor whiteColor];
     
-    self.window.rootViewController = [[UINavigationController alloc]initWithRootViewController:[IndexTableViewController new]];
+    self.window.rootViewController = [[UINavigationController alloc]initWithRootViewController:[TempViewController new]];
     
     [self.window makeKeyAndVisible];
     
