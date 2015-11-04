@@ -59,6 +59,11 @@
     }];
     
     if (result==0) {
+        self.label.text = @"人生若只如初见，何事秋风悲画扇。等闲变却故人心，http://baidu.com却😷😷😷😷http://baidu.com道故人心易变。骊山语罢清宵半，泪雨零铃终不怨。http://baidu.com😷😷😷😷";
+        self.label.frameWidth = self.view.frameWidth-10.0f*2;
+        self.label.frameHeight = 60.0f;
+        self.label.lineBreakMode = NSLineBreakByTruncatingTail;
+        return;
     }else if (result==1) {
         //测试绘制背景色不会受到行间距设置的影响
         self.label.lineHeightMultiple = 1.5f;

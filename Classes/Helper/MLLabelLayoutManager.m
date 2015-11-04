@@ -51,8 +51,14 @@
             NSRange glyphRangeInLine = NSIntersectionRange(glyphRange,lineRange);
             NSRange truncatedGlyphRange = [self truncatedGlyphRangeInLineFragmentForGlyphAtIndex:glyphRangeInLine.location];
             if (truncatedGlyphRange.location!=NSNotFound) {
-                //这里的glyphRangeInLine本身会带有被省略的区间，而我们下面计算最大行高和最小drawY的实现是不需要考虑省略的区间的，否则也可能计算有误。所以这里我们给过滤掉
-                glyphRangeInLine = NSMakeRange(glyphRangeInLine.location, truncatedGlyphRange.location-glyphRangeInLine.location);
+                //这里的glyphRangeInLine本身可能会带有被省略的区间，而我们下面计算最大行高和最小drawY的实现是不需要考虑省略的区间的，否则也可能计算有误。所以这里我们给过滤掉
+                NSRange sameRange = NSIntersectionRange(glyphRangeInLine, truncatedGlyphRange);
+                if (sameRange.length>0&&NSMaxRange(sameRange)==NSMaxRange(glyphRangeInLine)) {
+                    //我们这里先只处理tail模式的
+                    //而经过测试truncatedGlyphRangeInLineFragmentForGlyphAtIndex暂时只支持NSLineBreakByTruncatingTail模式
+                    //其他两种暂时也不会用，即使用，现在通过TextKit的话也没法获取
+                    glyphRangeInLine = NSMakeRange(glyphRangeInLine.location, sameRange.location-glyphRangeInLine.location);
+                }
             }
             
             if (glyphRangeInLine.length>0) {
