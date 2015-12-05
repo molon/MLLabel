@@ -331,7 +331,7 @@ static NSArray * kAllRegexps() {
 #pragma mark - 链接点击交互相关
 - (MLLink *)linkAtPoint:(CGPoint)location
 {
-    if (self.links.count<=0||self.textStorage.string.length == 0||self.textContainer.size.width<=0||self.textContainer.size.height<=0)
+    if (self.links.count<=0||self.text.length == 0||self.textContainer.size.width<=0||self.textContainer.size.height<=0)
     {
         return nil;
     }
@@ -397,7 +397,7 @@ static NSArray * kAllRegexps() {
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
     if (self.activeLink) {
-        NSString *linkText = [self.textStorage.string substringWithRange:self.activeLink.linkRange];
+        NSString *linkText = [self.text substringWithRange:self.activeLink.linkRange];
         
         //告诉外面已经点击了某链接
         if (self.activeLink.didClickLinkBlock) {
@@ -443,7 +443,7 @@ static NSArray * kAllRegexps() {
     if (sender.state==UIGestureRecognizerStateBegan) {
         MLLink *link = [self linkAtPoint:[sender locationInView:self]];
         if (link) {
-            NSString *linkText = [self.textStorage.string substringWithRange:link.linkRange];
+            NSString *linkText = [self.text substringWithRange:link.linkRange];
             
             //告诉外面已经长按了某链接
             if (link.didLongPressLinkBlock) {
@@ -474,7 +474,7 @@ static NSArray * kAllRegexps() {
 {
     NSMutableArray *validLinks = [NSMutableArray arrayWithCapacity:links.count];
     for (MLLink *link in links) {
-        if (!link||NSMaxRange(link.linkRange)>self.textStorage.length) {
+        if (!link||NSMaxRange(link.linkRange)>self.text.length) {
             continue;
         }
         
