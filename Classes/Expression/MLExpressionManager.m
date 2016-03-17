@@ -238,33 +238,32 @@
 - (void)setRegex:(NSString *)regex
 {
     NSAssert(regex.length>0, @"regex length must >0");
-    _regex = regex;
+    _regex = [regex copy];
     
     self.expressionRegularExpression = [[MLExpressionManager sharedInstance]expressionRegularExpressionWithRegex:regex];
 }
 
 - (void)setPlistName:(NSString *)plistName
 {
-    
     NSAssert(plistName.length>0, @"plistName's length must >0");
     
-
-    if (![[plistName lowercaseString] hasSuffix:@".plist"]) {
-        plistName = [plistName stringByAppendingString:@".plist"];
-    }
+    _plistName = [plistName copy];
     
-    _plistName = plistName;
+    if (![[_plistName lowercaseString] hasSuffix:@".plist"]) {
+        _plistName = [_plistName stringByAppendingString:@".plist"];
+    }
     
     self.expressionMap = [[MLExpressionManager sharedInstance]expressionMapWithPlistName:plistName];
 }
 
 - (void)setBundleName:(NSString *)bundleName
 {
-    if (![[bundleName lowercaseString] hasSuffix:@".bundle"]) {
-        bundleName = [bundleName stringByAppendingString:@".bundle"];
+    _bundleName = [bundleName copy];
+    
+    if (![[_bundleName lowercaseString] hasSuffix:@".bundle"]) {
+        _bundleName = [_bundleName stringByAppendingString:@".bundle"];
     }
     
-    _bundleName = bundleName;
     //TODO: 这个最好验证下存在性，后期搞
 }
 

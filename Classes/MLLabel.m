@@ -679,7 +679,7 @@ static NSArray * kStylePropertyNames() {
 
 - (void)setDoBeforeDrawingTextBlock:(void (^)(CGRect rect,CGPoint beginOffset,CGSize drawSize))doBeforeDrawingTextBlock
 {
-    _doBeforeDrawingTextBlock = doBeforeDrawingTextBlock;
+    _doBeforeDrawingTextBlock = [doBeforeDrawingTextBlock copy];
     
     [self setNeedsDisplay];
 }
