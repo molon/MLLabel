@@ -253,7 +253,7 @@
         _plistName = [_plistName stringByAppendingString:@".plist"];
     }
     
-    self.expressionMap = [[MLExpressionManager sharedInstance]expressionMapWithPlistName:plistName];
+    self.expressionMap = [[MLExpressionManager sharedInstance]expressionMapWithPlistName:_plistName];
 }
 
 - (void)setBundleName:(NSString *)bundleName
