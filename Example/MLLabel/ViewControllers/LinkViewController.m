@@ -47,13 +47,18 @@
     self.label.lineHeightMultiple = 1.0f;
     self.label.lineSpacing = 0.0f;
     LABEL.beforeAddLinkBlock = nil;
-    self.label.text = @"人生若只如初见，http://g.cn何事秋风悲http://baidu.com画扇。等闲变却故人心，dudl@qq.com却道故人心易变。13612341234骊山语罢清宵半，泪雨零铃终不怨。#何如 薄幸@锦衣郎，比翼连枝当日愿。";
+    self.label.text = @"人生若只如初见，何事秋风悲画扇。等闲变却故人心，http://baidu.com却😷😷😷😷http://baidu.com道13743237899故+8613978432345人心易8613743237899变。骊山语罢135-3458-9876清宵半，泪雨573946558@qq.com零铃终不怨。http://baidu.com😷😷😷😷";
     LABEL.dataDetectorTypes = MLDataDetectorTypeAll;
     LABEL.allowLineBreakInsideLinks = YES;
     LABEL.linkTextAttributes = nil;
     LABEL.activeLinkTextAttributes = nil;
     
     [LABEL setDidClickLinkBlock:^(MLLink *link, NSString *linkText, MLLinkLabel *label) {
+        if (link.linkType==MLLinkTypePhoneNumber) {
+            NSString *url = [NSString stringWithFormat:@"telprompt://%@",link.linkValue];
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:url]];
+            return;
+        }
         NSString *tips = [NSString stringWithFormat:@"Click\nlinkType:%ld\nlinkText:%@\nlinkValue:%@",link.linkType,linkText,link.linkValue];
         SHOW_SIMPLE_TIPS(tips);
     }];

@@ -27,7 +27,7 @@ return _##regularExpression;\
 
 
 REGULAREXPRESSION(URLRegularExpression,@"((http[s]{0,1}|ftp)://[a-zA-Z0-9\\.\\-]+\\.([a-zA-Z]{2,4})(:\\d+)?(/[a-zA-Z0-9\\.\\-~!@#$%^&*+?:_/=<>]*)?)|(www.[a-zA-Z0-9\\.\\-]+\\.([a-zA-Z]{2,4})(:\\d+)?(/[a-zA-Z0-9\\.\\-~!@#$%^&*+?:_/=<>]*)?)")
-REGULAREXPRESSION(PhoneNumerRegularExpression, @"\\d{3}-\\d{8}|\\d{3}-\\d{7}|\\d{4}-\\d{8}|\\d{4}-\\d{7}|1+[3578]+\\d{9}|\\d{8}|\\d{7}")
+REGULAREXPRESSION(PhoneNumerRegularExpression, @"\\d{3}-\\d{8}|\\d{3}-\\d{7}|\\d{4}-\\d{8}|\\d{4}-\\d{7}|1+[3578]+\\d{9}|[+]861+[3578]+\\d{9}|861+[3578]+\\d{9}|1+[3578]+\\d{1}-\\d{4}-\\d{4}|\\d{8}|\\d{7}")
 REGULAREXPRESSION(EmailRegularExpression, @"[A-Z0-9a-z\\._%+-]+@([A-Za-z0-9-]+\\.)+[A-Za-z]{2,4}")
 REGULAREXPRESSION(UserHandleRegularExpression, @"@[\\u4e00-\\u9fa5\\w\\-]+")
 REGULAREXPRESSION(HashtagRegularExpression, @"#([\\u4e00-\\u9fa5\\w\\-]+)")
@@ -236,6 +236,12 @@ static NSArray * kAllRegexps() {
         if (dataDetectorTypes&(allDataDetectorTypes[i])) {
             [regexps addObject:allRegexps[i]];
         }
+    }
+    //保证电话号码优先级最低，因为向下兼容，所以只能在此处理。
+    NSRegularExpression *phoneNumberRegexp = kPhoneNumerRegularExpression();
+    if ([regexps containsObject:phoneNumberRegexp]) {
+        [regexps removeObject:phoneNumberRegexp];
+        [regexps addObject:phoneNumberRegexp];
     }
     return regexps.count>0?regexps:nil;
 }
