@@ -7,6 +7,7 @@
 //
 
 #import "NSString+MLLabel.h"
+#import "NSAttributedString+MLLabel.h"
 
 @implementation NSString (MLLabel)
 
@@ -72,5 +73,9 @@
     return 0;
 }
 
+- (NSAttributedString*)linkAttributedStringWithLinkRegex:(NSRegularExpression*)linkRegex groupIndexForDisplay:(NSInteger)groupIndexForDisplay groupIndexForValue:(NSInteger)groupIndexForValue{
+    NSAttributedString *attStr = [[NSAttributedString alloc]initWithString:self];
+    return [attStr linkAttributedStringWithLinkRegex:linkRegex groupIndexForDisplay:groupIndexForDisplay groupIndexForValue:groupIndexForValue];
+}
 
 @end
