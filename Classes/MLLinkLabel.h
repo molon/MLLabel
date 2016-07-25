@@ -21,9 +21,9 @@ typedef NS_OPTIONS(NSUInteger, MLDataDetectorTypes) {
     //上面是个性化的匹配
     
     
-    //这个是对attributedText里带有Link属性的检测，至于为什么31，预留上面空间以添加新的个性化
+    //这个是对attributedText里带有Link属性的检测，至于为什么30，预留上面空间以添加新的个性化
     //这个东西和dataDetectorTypesOfAttributedLinkValue对应起来，会对带有NSLinkAttributeName区间的value进行检测，匹配则给予对应的LinkType，找不到则为Other
-    MLDataDetectorTypeAttributedLink = 1 << 31,
+    MLDataDetectorTypeAttributedLink = 1 << 30,
 };
 
 
@@ -35,7 +35,7 @@ typedef NS_ENUM(NSUInteger, MLLinkType) {
     MLLinkTypeUserHandle    = 4,          //@
     MLLinkTypeHashtag       = 5,          //#..#
     
-    MLLinkTypeOther        = 31,          //这个一般是和MLDataDetectorTypeAttributedLink对应的，但是也可以自己随意添加啦，不过是一个标识而已，至于为什么31，随便定的，预留上面空间以添加新的个性化
+    MLLinkTypeOther        = 30,          //这个一般是和MLDataDetectorTypeAttributedLink对应的，但是也可以自己随意添加啦，不过是一个标识而已，至于为什么30，随便定的，预留上面空间以添加新的个性化
 };
 
 #define kDefaultLinkColorForMLLinkLabel [UIColor colorWithRed:0.061 green:0.515 blue:0.862 alpha:1.000]

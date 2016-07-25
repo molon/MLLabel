@@ -99,6 +99,9 @@
         [attrStr addAttribute:NSLinkAttributeName value:@"13612341234" range:NSMakeRange(10, 2)];
         LABEL.attributedText = attrStr;
         
+        //测试给一个含有链接的attrStr，但是不自动检测其value所对应的linkType
+        LABEL.dataDetectorTypesOfAttributedLinkValue = MLDataDetectorTypeNone;
+        
         //在设置了text后针对修改link样式的例子
         for (MLLink *link in LABEL.links) {
             if ([link.linkValue isEqualToString:@"13612341234"]) {
