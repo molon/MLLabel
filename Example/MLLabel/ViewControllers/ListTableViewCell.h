@@ -11,7 +11,7 @@
 
 @interface ListTableViewCell : UITableViewCell
 
-@property (weak, nonatomic) IBOutlet MLLinkLabel *textlabel;
+@property (weak, nonatomic) IBOutlet MLLinkLabel *contentLabel;
 
 + (CGFloat)heightForExpressionText:(NSAttributedString*)expressionText width:(CGFloat)width;
 

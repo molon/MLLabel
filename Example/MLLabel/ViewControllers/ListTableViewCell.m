@@ -16,21 +16,21 @@
     self.selectionStyle = UITableViewCellSelectionStyleNone;
     
     
-    self.textlabel.font = [UIFont systemFontOfSize:16.0f];
+    self.contentLabel.font = [UIFont systemFontOfSize:16.0f];
     
-    self.textlabel.numberOfLines = 0;
-    self.textlabel.textInsets = UIEdgeInsetsMake(10, 10, 10, 10);
-    self.textlabel.lineHeightMultiple = 1.1f;
+    self.contentLabel.numberOfLines = 0;
+    self.contentLabel.textInsets = UIEdgeInsetsMake(10, 10, 10, 10);
+    self.contentLabel.lineHeightMultiple = 1.1f;
     
-    self.textlabel.linkTextAttributes = @{NSForegroundColorAttributeName:[UIColor blueColor]};
-    self.textlabel.activeLinkTextAttributes = @{NSForegroundColorAttributeName:[UIColor blueColor],NSBackgroundColorAttributeName:kDefaultActiveLinkBackgroundColorForMLLinkLabel};
+    self.contentLabel.linkTextAttributes = @{NSForegroundColorAttributeName:[UIColor blueColor]};
+    self.contentLabel.activeLinkTextAttributes = @{NSForegroundColorAttributeName:[UIColor blueColor],NSBackgroundColorAttributeName:kDefaultActiveLinkBackgroundColorForMLLinkLabel};
     
-    [self.textlabel setDidClickLinkBlock:^(MLLink *link, NSString *linkText, MLLinkLabel *label) {
+    [self.contentLabel setDidClickLinkBlock:^(MLLink *link, NSString *linkText, MLLinkLabel *label) {
         NSString *tips = [NSString stringWithFormat:@"Click\nlinkType:%ld\nlinkText:%@\nlinkValue:%@",link.linkType,linkText,link.linkValue];
         SHOW_SIMPLE_TIPS(tips);
     }];
     
-    [self.textlabel setDidLongPressLinkBlock:^(MLLink *link, NSString *linkText, MLLinkLabel *label) {
+    [self.contentLabel setDidLongPressLinkBlock:^(MLLink *link, NSString *linkText, MLLinkLabel *label) {
         NSString *tips = [NSString stringWithFormat:@"LongPress\nlinkType:%ld\nlinkText:%@\nlinkValue:%@",link.linkType,linkText,link.linkValue];
         SHOW_SIMPLE_TIPS(tips);
     }];
@@ -56,7 +56,7 @@
 #pragma mark - gesture delegate
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch
 {
-    return ![self.textlabel linkAtPoint:[touch locationInView:self.textlabel]];
+    return ![self.contentLabel linkAtPoint:[touch locationInView:self.contentLabel]];
 }
 
 

@@ -294,6 +294,9 @@ static NSArray * kAllRegexps() {
                 }else if ([value isKindOfClass:[NSAttributedString class]]) {
                     linkValue = [value string];
                 }
+                
+                NSAssert(linkValue, @"The value of NSLinkAttributeName should be NSString/NSAttributedString/NSURL!");
+                
                 if (linkValue.length>0) {
                     MLLink *link = [MLLink linkWithType:[self linkTypeOfString:linkValue withDataDetectorTypes:self.dataDetectorTypesOfAttributedLinkValue] value:linkValue range:range];
                     if (self.beforeAddLinkBlock) {

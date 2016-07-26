@@ -63,7 +63,7 @@
 {
     ListTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:[ListTableViewCell cellReuseIdentifier] forIndexPath:indexPath];
     
-    cell.textlabel.attributedText = self.expressionData[indexPath.row%self.expressionData.count];
+    cell.contentLabel.attributedText = self.expressionData[indexPath.row%self.expressionData.count];
     
     return cell;
 }
