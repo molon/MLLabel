@@ -55,8 +55,7 @@
     //遍历结果，找到结果中被()包裹的区域作为显示内容
     NSUInteger location = 0;
     for (NSTextCheckingResult *result in results) {
-        NSInteger rangeCount = [result numberOfRanges];
-        NSAssert(rangeCount>1&&rangeCount>groupIndexForDisplay&&rangeCount>groupIndexForValue, @"Please ensure that group sign `()` in the linkRegex is correct!");
+        NSAssert([result numberOfRanges]>1&&[result numberOfRanges]>groupIndexForDisplay&&[result numberOfRanges]>groupIndexForValue, @"Please ensure that group sign `()` in the linkRegex is correct!");
         NSRange range = [result rangeAtIndex:0];
         
         //把前面的非匹配出来的区域加进来

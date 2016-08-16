@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
 s.name         = "MLLabel"
-s.version      = "1.10.0"
+s.version      = "1.10.1"
 s.summary      = "UILabel with TextKit. support Link and Expression. (iOS 7+)"
 
 s.homepage     = 'https://github.com/molon/MLLabel'
