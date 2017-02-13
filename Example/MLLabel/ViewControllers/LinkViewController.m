@@ -48,7 +48,7 @@
     self.label.lineHeightMultiple = 1.0f;
     self.label.lineSpacing = 0.0f;
     LABEL.beforeAddLinkBlock = nil;
-    self.label.text = @"人生若只如初见，何事秋风悲画扇。等闲变却故人心，http://baidu.com却😷😷😷😷http://baidu.com道13743237899故+8613978432345人心易8613743237899变。骊山语罢135-3458-9876清宵半，泪雨573946558@qq.com零铃http://192.168.0.100终不怨192.168.0.100:9090。http://baidu.com😷😷😷😷";
+    self.label.text = @"人生若只如初见，何事秋风悲画扇。等闲变却故人心，http://baidu.com却😷😷😷😷http://baidu.com道13743237899故+8613978432345人心易8613743237899变。骊山语罢135-3458-9876清宵半，泪雨573946558@qq.com零铃http://192.168.0.100终不怨192.168.0.100:9090。http://baidu.com😷😷😷https://big-up.style/tokyobigup😷";
     LABEL.dataDetectorTypes = MLDataDetectorTypeAll;
     LABEL.allowLineBreakInsideLinks = YES;
     LABEL.linkTextAttributes = nil;
