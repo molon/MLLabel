@@ -13,7 +13,7 @@
 
 #define kAdjustFontSizeEveryScalingFactor (M_E / M_PI)
 //总得有个极限
-static CGFloat MLFLOAT_MAX = 100000.0f;
+static CGFloat MLFLOAT_MAX = 10000000.0f;
 static CGFloat ADJUST_MIN_FONT_SIZE = 1.0f;
 static CGFloat ADJUST_MIN_SCALE_FACTOR = 0.01f;
 
@@ -230,9 +230,9 @@ static NSArray * kStylePropertyNames() {
 }
 
 #pragma mark - common helper
-- (CGSize)textContainerSizeWithBoundsSize:(CGSize)size
+- (CGSize)drawTextSizeWithBoundsSize:(CGSize)size
 {
-    //bounds改了之后，要相应的改变textContainer的size，但是要根据insets调整
+    //bounds改了之后，要根据insets调整绘制区域的大小
     CGFloat width = fmax(0, size.width-_textInsets.left-_textInsets.right);
     CGFloat height = fmax(0, size.height-_textInsets.top-_textInsets.bottom);
     return CGSizeMake(width, height);
@@ -281,12 +281,10 @@ static NSArray * kStylePropertyNames() {
 {
     //颜色
     UIColor *color = self.styleRecord.textColor;
-    if (!_styleRecord.enabled)
-    {
+    if (!_styleRecord.enabled) {
         color = [UIColor lightGrayColor];
     }
-    else if (_styleRecord.highlighted)
-    {
+    else if (_styleRecord.highlighted) {
         color = _styleRecord.highlightedTextColor;
     }
     if (!color) {
@@ -298,13 +296,10 @@ static NSArray * kStylePropertyNames() {
     
     //阴影
     NSShadow *shadow = shadow = [[NSShadow alloc] init];
-    if (_styleRecord.shadowColor)
-    {
+    if (_styleRecord.shadowColor) {
         shadow.shadowColor = _styleRecord.shadowColor;
         shadow.shadowOffset = _styleRecord.shadowOffset;
-    }
-    else
-    {
+    }else {
         shadow.shadowOffset = CGSizeMake(0, -1);
         shadow.shadowColor = nil;
     }
@@ -336,8 +331,8 @@ static NSArray * kStylePropertyNames() {
         return bounds;
     }
     
-    CGSize newTextContainerSize = [self textContainerSizeWithBoundsSize:bounds.size];
-    if (newTextContainerSize.width<=0||newTextContainerSize.height<=0){
+    CGSize drawTextSize = [self drawTextSizeWithBoundsSize:bounds.size];
+    if (drawTextSize.width<=0||drawTextSize.height<=0){
         CGRect textBounds = CGRectZero;
         textBounds.origin = bounds.origin;
         textBounds.size = CGSizeMake(fmin(_textInsets.left+_textInsets.right,CGRectGetWidth(bounds)), fmin(_textInsets.top+_textInsets.bottom,CGRectGetHeight(bounds)));
@@ -349,7 +344,11 @@ static NSArray * kStylePropertyNames() {
         CGSize savedTextContainerSize = _textContainer.size;
         NSInteger savedTextContainerNumberOfLines = _textContainer.maximumNumberOfLines;
         
-        _textContainer.size = newTextContainerSize;
+        //这一句的原因参考resizeTextContainerSize
+        if (drawTextSize.height<MLFLOAT_MAX) {
+            drawTextSize.height += self.lineSpacing;
+        }
+        _textContainer.size = drawTextSize;
         _textContainer.maximumNumberOfLines = numberOfLines;
         
         NSAttributedString *savedAttributedString = nil;
@@ -379,8 +378,8 @@ static NSArray * kStylePropertyNames() {
         _textContainer.maximumNumberOfLines = savedTextContainerNumberOfLines;
     }
     //最终修正
-    textBounds.size.width =  fmin(ceilf(textBounds.size.width), newTextContainerSize.width);
-    textBounds.size.height = fmin(ceilf(textBounds.size.height), newTextContainerSize.height);
+    textBounds.size.width =  fmin(ceilf(textBounds.size.width), drawTextSize.width);
+    textBounds.size.height = fmin(ceilf(textBounds.size.height), drawTextSize.height);
     textBounds.origin = bounds.origin;
     
     textBounds.size = CGSizeMake(fmin(CGRectGetWidth(textBounds)+_textInsets.left+_textInsets.right,CGRectGetWidth(bounds)), fmin(CGRectGetHeight(textBounds)+_textInsets.top+_textInsets.bottom,CGRectGetHeight(bounds)));
@@ -459,7 +458,8 @@ static NSArray * kStylePropertyNames() {
     //            [super drawTextInRect:rect]; //这里调用可以查看是否绘制和原来的不一致
     
     //如果绘制区域本身就为0，就应该直接返回，不做多余操作。
-    if (_textContainer.size.width<=0||_textContainer.size.height<=0){
+    CGSize drawSize = [self drawTextSizeWithBoundsSize:self.bounds.size];
+    if (drawSize.width<=0||drawSize.height<=0){
         return;
     }
     
@@ -506,7 +506,6 @@ static NSArray * kStylePropertyNames() {
     }
     
     
-    CGPoint textOffset;
     //这里根据container的size和manager布局属性以及字符串来得到实际绘制的range区间
     NSRange glyphRange = [_layoutManager glyphRangeForTextContainer:_textContainer];
     
@@ -514,7 +513,7 @@ static NSArray * kStylePropertyNames() {
     CGRect drawBounds = [_layoutManager usedRectForTextContainer:_textContainer];
     
     //因为label是默认垂直居中的，所以需要根据实际绘制区域的bounds来调整出居中的offset
-    textOffset = [self textOffsetWithTextSize:drawBounds.size];
+    CGPoint textOffset = [self textOffsetWithTextSize:drawBounds.size];
     
     if (_doBeforeDrawingTextBlock) {
         //而实际上drawBounds的宽度可能不是我们想要的，我们想要的是_textContainer的宽度，但是高度需要是真实绘制高度
@@ -533,7 +532,7 @@ static NSArray * kStylePropertyNames() {
     CGPoint textOffset = CGPointZero;
     //根据insets和默认垂直居中来计算出偏移
     textOffset.x = _textInsets.left;
-    CGFloat paddingHeight = (_textContainer.size.height - textSize.height) / 2.0f;
+    CGFloat paddingHeight = (self.bounds.size.height- _textInsets.top - _textInsets.bottom - textSize.height) / 2.0f;
     textOffset.y = paddingHeight+_textInsets.top;
     
     return textOffset;
@@ -620,7 +619,14 @@ static NSArray * kStylePropertyNames() {
 - (void)resizeTextContainerSize
 {
     if (_textContainer) {
-        _textContainer.size = [self textContainerSizeWithBoundsSize:self.bounds.size];
+        //usedRectForTextContainer的BUG，textContainer提供的容器大小一定要假设最后一行也有底部行间距的大小的，否则结果会少一行。
+        //计算结果来说的话就没有最后一行的行间距，很奇葩。
+        //https://github.com/molon/MLLabel/issues/60
+        CGSize size = [self drawTextSizeWithBoundsSize:self.bounds.size];
+        if (size.height<MLFLOAT_MAX) {
+            size.height+=self.lineSpacing;
+        }
+        _textContainer.size = size;
     }
 }
 

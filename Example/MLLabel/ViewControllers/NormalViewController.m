@@ -44,15 +44,19 @@
     self.label.textAlignment = NSTextAlignmentCenter;
     self.label.adjustsFontSizeToFitWidth = YES;
     self.label.textInsets = UIEdgeInsetsZero;
+    self.label.lineSpacing = 0.0f;
     self.label.text = @"人生若只如初见，何事秋风悲画扇。等闲变却故人心，却道故人心易变。骊山语罢清宵半，泪雨零铃终不怨。\n何如薄幸锦衣郎，比翼连枝当日愿。";
     [self.label setDoBeforeDrawingTextBlock:nil];
 
     if (result==0) {
     }else if (result==1) {
+        self.label.text = @"人生若只如初见，何事秋风悲画扇。等闲变却故人心，却道故人心易变。骊山语罢清宵半，泪雨零铃终不怨。何如薄幸锦衣郎，比翼连枝当日愿。人生若只如初见，何事秋风悲画扇。等闲变却故人心，却道故人心易变。骊山语罢清宵半，泪雨零铃终不怨。何如薄幸锦衣郎，比翼连枝当日愿。人生若只如初见，何事秋风悲画扇。等闲变却故人心，却道故人心易变。骊山语罢清宵半，泪雨零铃终不怨。何如薄幸锦衣郎，比翼连枝当日愿。";
         self.label.textColor = [UIColor blackColor];
         self.label.font = [UIFont systemFontOfSize:16.0f];
-        self.label.numberOfLines = 2;
-        self.label.adjustsFontSizeToFitWidth = YES;
+        self.label.numberOfLines = 6;
+        self.label.textAlignment = NSTextAlignmentLeft;
+        self.label.lineSpacing = 5.0f;
+        self.label.adjustsFontSizeToFitWidth = NO;
         self.label.textInsets = UIEdgeInsetsMake(5, 5, 5, 5);
     }else if (result==2) {
         self.label.textColor = [UIColor blueColor];
