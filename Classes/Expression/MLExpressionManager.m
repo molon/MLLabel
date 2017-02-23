@@ -190,8 +190,14 @@
         NSString *imageName = expression.expressionMap[expressionAttrStr.string];
         if (imageName.length>0) {
             //加个表情到结果中
-            NSString *imagePath = [expression.bundleName stringByAppendingPathComponent:imageName];
-            UIImage *image = [UIImage imageNamed:imagePath];
+            UIImage *image = nil;
+            if ([UIImage respondsToSelector:@selector(imageNamed:inBundle:compatibleWithTraitCollection:)]) {
+                NSBundle *bundle = [NSBundle bundleWithURL:[[NSBundle mainBundle] URLForResource:expression.bundleName withExtension:nil]];
+                image = [UIImage imageNamed:imageName inBundle:bundle compatibleWithTraitCollection:nil];
+            }else{
+                NSString *imagePath = [expression.bundleName stringByAppendingPathComponent:imageName];
+                image = [UIImage imageNamed:imagePath];
+            }
             
             MLTextAttachment *textAttachment = [MLTextAttachment textAttachmentWithLineHeightMultiple:kExpressionLineHeightMultiple imageBlock:^UIImage *(CGRect imageBounds, NSTextContainer *textContainer, NSUInteger charIndex, MLTextAttachment *textAttachment) {
                 return image;

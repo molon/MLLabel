@@ -13,11 +13,11 @@
 
 #define kAdjustFontSizeEveryScalingFactor (M_E / M_PI)
 //总得有个极限
-static CGFloat MLFLOAT_MAX = 10000000.0f;
-static CGFloat ADJUST_MIN_FONT_SIZE = 1.0f;
-static CGFloat ADJUST_MIN_SCALE_FACTOR = 0.01f;
+static CGFloat kMLLabelFloatMax = 10000000.0f;
+static CGFloat kMLLabelAdjustMinFontSize = 1.0f;
+static CGFloat kMLLabelAdjustMinScaleFactor = 0.01f;
 
-static NSArray * kStylePropertyNames() {
+static NSArray * kMLLabelStylePropertyNames() {
     static NSArray *_stylePropertyNames = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -26,6 +26,16 @@ static NSArray * kStylePropertyNames() {
                                 @"highlightedTextColor",@"shadowColor",@"shadowOffset",@"enabled",@"lineHeightMultiple",@"lineSpacing"];
     });
     return _stylePropertyNames;
+}
+
+static inline CGSize _MLLabel_CGSizePixelRound(CGSize size) {
+    static CGFloat scale = 0.0f;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        scale = [UIScreen mainScreen].scale;
+    });
+    return CGSizeMake(round(size.width * scale) / scale,
+                      round(size.height * scale) / scale);
 }
 
 @interface MLLabelStylePropertyRecord : NSObject
@@ -102,7 +112,7 @@ static NSArray * kStylePropertyNames() {
     }
     
     //kvo 监视style属性
-    for (NSString *key in kStylePropertyNames()) {
+    for (NSString *key in kMLLabelStylePropertyNames()) {
         [self.styleRecord setValue:[self valueForKey:key] forKey:key];
         //不直接使用NSKeyValueObservingOptionInitial来初始化赋值record，是防止无用的resettext
         [self addObserver:self forKeyPath:key options:NSKeyValueObservingOptionOld|NSKeyValueObservingOptionNew context:nil];
@@ -112,7 +122,7 @@ static NSArray * kStylePropertyNames() {
 - (void)dealloc
 {
     //kvo 移除监视style属性
-    for (NSString *key in kStylePropertyNames()) {
+    for (NSString *key in kMLLabelStylePropertyNames()) {
         [self removeObserver:self forKeyPath:key context:nil];
     }
 }
@@ -121,7 +131,7 @@ static NSArray * kStylePropertyNames() {
 #pragma mark - KVO
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
-    if ([kStylePropertyNames() containsObject:keyPath]) {
+    if ([kMLLabelStylePropertyNames() containsObject:keyPath]) {
         //存到记录对象里
         [_styleRecord setValue:[object valueForKey:keyPath] forKey:keyPath];
         
@@ -345,7 +355,7 @@ static NSArray * kStylePropertyNames() {
         NSInteger savedTextContainerNumberOfLines = _textContainer.maximumNumberOfLines;
         
         //这一句的原因参考resizeTextContainerSize
-        if (drawTextSize.height<MLFLOAT_MAX) {
+        if (drawTextSize.height<kMLLabelFloatMax) {
             drawTextSize.height += self.lineSpacing;
         }
         _textContainer.size = drawTextSize;
@@ -397,7 +407,7 @@ static NSArray * kStylePropertyNames() {
         mustReturnYES = YES;
     }
     //总得有个极限
-    scaleFactor = fmax(scaleFactor, ADJUST_MIN_SCALE_FACTOR);
+    scaleFactor = fmax(scaleFactor, kMLLabelAdjustMinScaleFactor);
     
     //遍历并且设置一个新的字体
     NSMutableAttributedString *attrStr = [originalAttributedText mutableCopy];
@@ -408,7 +418,7 @@ static NSArray * kStylePropertyNames() {
             if (font&&[font isKindOfClass:[UIFont class]]) {
                 NSString *fontName = font.fontName;
                 CGFloat newSize = font.pointSize*scaleFactor;
-                if (newSize<ADJUST_MIN_FONT_SIZE) { //字体的极限
+                if (newSize<kMLLabelAdjustMinFontSize) { //字体的极限
                     mustReturnYES = YES;
                 }
                 UIFont *newFont = [UIFont fontWithName:fontName size:newSize];
@@ -431,13 +441,13 @@ static NSArray * kStylePropertyNames() {
     CGSize currentTextSize = CGSizeZero;
     if (numberOfLines>0) {
         NSInteger lineCount = 0;
-        currentTextSize = [self textRectForBounds:CGRectMake(0, 0, CGRectGetWidth(bounds), MLFLOAT_MAX) attributedString:attrStr limitedToNumberOfLines:0 lineCount:&lineCount].size;
+        currentTextSize = [self textRectForBounds:CGRectMake(0, 0, CGRectGetWidth(bounds), kMLLabelFloatMax) attributedString:attrStr limitedToNumberOfLines:0 lineCount:&lineCount].size;
         //如果求行数大于设置行数，也不认为塞满了
         if (lineCount>numberOfLines) {
             return NO;
         }
     }else{
-        currentTextSize = [self textRectForBounds:CGRectMake(0, 0, CGRectGetWidth(bounds), MLFLOAT_MAX) attributedString:attrStr limitedToNumberOfLines:0 lineCount:NULL].size;
+        currentTextSize = [self textRectForBounds:CGRectMake(0, 0, CGRectGetWidth(bounds), kMLLabelFloatMax) attributedString:attrStr limitedToNumberOfLines:0 lineCount:NULL].size;
     }
     
     //大小已经足够就认作OK
@@ -482,7 +492,7 @@ static NSArray * kStylePropertyNames() {
                 attributedString = [attributedString attributedSubstringFromRange:NSMakeRange(0, [attributedString.string lengthToLineIndex:self.numberOfLines-1])];
             }
             
-            CGFloat textWidth = [self textRectForBounds:CGRectMake(0, 0, MLFLOAT_MAX, MLFLOAT_MAX) attributedString:attributedString limitedToNumberOfLines:0 lineCount:NULL].size.width;
+            CGFloat textWidth = [self textRectForBounds:CGRectMake(0, 0, kMLLabelFloatMax, kMLLabelFloatMax) attributedString:attributedString limitedToNumberOfLines:0 lineCount:NULL].size.width;
             textWidth = fmax(0, textWidth-_textInsets.left-_textInsets.right);
             if (textWidth>0) {
                 CGFloat availableWidth = _textContainer.size.width*self.numberOfLines;
@@ -568,7 +578,7 @@ static NSArray * kStylePropertyNames() {
             attributedString = [attributedString attributedSubstringFromRange:NSMakeRange(0, [attributedString.string lengthToLineIndex:self.numberOfLines-1])];
         }
         
-        CGFloat textWidth = [self textRectForBounds:CGRectMake(0, 0, MLFLOAT_MAX, MLFLOAT_MAX) attributedString:attributedString limitedToNumberOfLines:0 lineCount:NULL].size.width;
+        CGFloat textWidth = [self textRectForBounds:CGRectMake(0, 0, kMLLabelFloatMax, kMLLabelFloatMax) attributedString:attributedString limitedToNumberOfLines:0 lineCount:NULL].size.width;
         textWidth = fmax(0, textWidth-_textInsets.left-_textInsets.right);
         if (textWidth>0) {
             CGFloat availableWidth = _textContainer.size.width*numberOfLines;
@@ -594,23 +604,23 @@ static NSArray * kStylePropertyNames() {
 - (CGSize)sizeThatFits:(CGSize)size
 {
     size = [super sizeThatFits:size];
-    if (size.height>0) {
-        size.height++;
-    }
-    return size;
+//    if (size.height>0) {
+//        size.height++;
+//    }
+    return _MLLabel_CGSizePixelRound(size);
 }
 
 - (CGSize)intrinsicContentSize {
     CGSize size = [super intrinsicContentSize];
-    if (size.height>0) {
-        size.height++;
-    }
-    return size;
+//    if (size.height>0) {
+//        size.height++;
+//    }
+    return _MLLabel_CGSizePixelRound(size);
 }
 
 - (CGSize)preferredSizeWithMaxWidth:(CGFloat)maxWidth
 {
-    CGSize size = [self sizeThatFits:CGSizeMake(maxWidth, MLFLOAT_MAX)];
+    CGSize size = [self sizeThatFits:CGSizeMake(maxWidth, kMLLabelFloatMax)];
     size.width = fmin(size.width, maxWidth); //在numberOfLine为1模式下返回的可能会比maxWidth大，所以这里我们限制下
     return size;
 }
@@ -623,7 +633,7 @@ static NSArray * kStylePropertyNames() {
         //计算结果来说的话就没有最后一行的行间距，很奇葩。
         //https://github.com/molon/MLLabel/issues/60
         CGSize size = [self drawTextSizeWithBoundsSize:self.bounds.size];
-        if (size.height<MLFLOAT_MAX) {
+        if (size.height<kMLLabelFloatMax) {
             size.height+=self.lineSpacing;
         }
         _textContainer.size = size;
