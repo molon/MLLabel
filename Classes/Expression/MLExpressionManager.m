@@ -202,7 +202,15 @@
             MLTextAttachment *textAttachment = [MLTextAttachment textAttachmentWithLineHeightMultiple:kExpressionLineHeightMultiple imageBlock:^UIImage *(CGRect imageBounds, NSTextContainer *textContainer, NSUInteger charIndex, MLTextAttachment *textAttachment) {
                 return image;
             } imageAspectRatio:image.size.width/image.size.height];
-            [resultAttributedString appendAttributedString:[NSAttributedString attributedStringWithAttachment:textAttachment]];
+            
+            NSMutableAttributedString *attachmentAttributedString = [NSMutableAttributedString attributedStringWithAttachment:textAttachment];
+            [expressionAttrStr enumerateAttributesInRange:NSMakeRange(0, expressionAttrStr.length) options:0 usingBlock:^(NSDictionary *attrs, NSRange range, BOOL *stop) {
+                if (attrs.count>0&&range.length==expressionAttrStr.length) {
+                    [attachmentAttributedString addAttributes:attrs range:NSMakeRange(0, attachmentAttributedString.length)];
+                }
+            }];
+            
+            [resultAttributedString appendAttributedString:attachmentAttributedString];
         }else{
             //找不到对应图像名称就直接加上去
             [resultAttributedString appendAttributedString:expressionAttrStr];
