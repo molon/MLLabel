@@ -16,8 +16,8 @@ typedef NS_OPTIONS(NSUInteger, MLDataDetectorTypes) {
     //上面4个和UIDataDetectorTypes的对应，下面是自己加的
     
     MLDataDetectorTypeEmail         = 1 << 4,          // 邮箱
-    MLDataDetectorTypeUserHandle    = 1 << 5,          //@
-    MLDataDetectorTypeHashtag       = 1 << 6,          //#..#
+    MLDataDetectorTypeUserHandle    = 1 << 5,          //@..
+    MLDataDetectorTypeHashtag       = 1 << 6,          //#..
     //上面是个性化的匹配
     
     
@@ -34,7 +34,7 @@ typedef NS_ENUM(NSUInteger, MLLinkType) {
     MLLinkTypePhoneNumber   = 2,          // 电话
     MLLinkTypeEmail         = 3,          // 邮箱
     MLLinkTypeUserHandle    = 4,          //@
-    MLLinkTypeHashtag       = 5,          //#..#
+    MLLinkTypeHashtag       = 5,          //#..
     
     MLLinkTypeOther        = 30,          //这个一般是和MLDataDetectorTypeAttributedLink对应的，但是也可以自己随意添加啦，不过是一个标识而已，至于为什么30，随便定的，预留上面空间以添加新的个性化
 };
