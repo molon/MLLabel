@@ -203,7 +203,7 @@
                 return image;
             } imageAspectRatio:image.size.width/image.size.height];
             
-            NSMutableAttributedString *attachmentAttributedString = [NSMutableAttributedString attributedStringWithAttachment:textAttachment];
+            NSMutableAttributedString *attachmentAttributedString = [[NSAttributedString attributedStringWithAttachment:textAttachment]mutableCopy];
             [expressionAttrStr enumerateAttributesInRange:NSMakeRange(0, expressionAttrStr.length) options:0 usingBlock:^(NSDictionary *attrs, NSRange range, BOOL *stop) {
                 if (attrs.count>0&&range.length==expressionAttrStr.length) {
                     [attachmentAttributedString addAttributes:attrs range:NSMakeRange(0, attachmentAttributedString.length)];
