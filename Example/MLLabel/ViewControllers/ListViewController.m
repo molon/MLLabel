@@ -33,7 +33,7 @@
     
     MLExpression *exp = [MLExpression expressionWithRegex:@"\\[[a-zA-Z0-9\\u4e00-\\u9fa5]+\\]" plistName:@"Expression" bundleName:@"ClippedExpression"];
     
-    self.expressionData = [MLExpressionManager expressionAttributedStringsWithStrings:kCommonListData() expression:exp];
+    self.expressionData = [MLExpressionManager expressionAttributedStringsWithStrings:[kCommonListData() subarrayWithRange:NSMakeRange(0, 15)]  expression:exp];
     
 }
 
@@ -56,7 +56,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return 15;
+    return self.expressionData.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath

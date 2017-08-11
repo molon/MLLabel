@@ -37,7 +37,7 @@
 //    self.expressionData = [MLExpressionManager expressionAttributedStringsWithStrings:kCommonListData() expression:exp];
     //模拟回调处理表情
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0f * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [MLExpressionManager expressionAttributedStringsWithStrings:kCommonListData() expression:exp callback:^(NSArray *result) {
+        [MLExpressionManager expressionAttributedStringsWithStrings:[kCommonListData() subarrayWithRange:NSMakeRange(0, 100)]  expression:exp callback:^(NSArray *result) {
             self.expressionData = result;
             [self.tableView reloadData];
         }];
@@ -62,7 +62,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     // Return the number of rows in the section.
-    return self.expressionData?100:0; //配合模拟回调处理表情
+    return self.expressionData.count; //配合模拟回调处理表情
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
