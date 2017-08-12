@@ -169,7 +169,7 @@ REGULAREXPRESSION(HashtagRegularExpression, @"#([\\u4e00-\\u9fa5\\w\\-]+)")
 {
     //先提取出来links
     if (!self.dontReCreateLinks) {
-        self.links = [self linksWithString:text];
+        self.links = [[self class] linksWithString:text dataDetectorTypes:_dataDetectorTypes dataDetectorTypesOfAttributedLinkValue:_dataDetectorTypesOfAttributedLinkValue beforeAddLinkBlock:_beforeAddLinkBlock];
         _activeLink = nil; //这里不能走setter
     }
     
@@ -180,7 +180,7 @@ REGULAREXPRESSION(HashtagRegularExpression, @"#([\\u4e00-\\u9fa5\\w\\-]+)")
 {
     //先提取出来links
     if (!self.dontReCreateLinks) {
-        self.links = [self linksWithString:attributedText];
+        self.links = [[self class] linksWithString:attributedText dataDetectorTypes:_dataDetectorTypes dataDetectorTypesOfAttributedLinkValue:_dataDetectorTypesOfAttributedLinkValue beforeAddLinkBlock:_beforeAddLinkBlock];
         _activeLink = nil; //这里不能走setter
     }
     
@@ -226,7 +226,7 @@ static NSArray * kAllRegexps() {
     return _allRegexps;
 }
 
-- (NSArray*)regexpsWithDataDetectorTypes:(MLDataDetectorTypes)dataDetectorTypes
++ (NSArray*)regexpsWithDataDetectorTypes:(MLDataDetectorTypes)dataDetectorTypes
 {
     MLDataDetectorTypes const allDataDetectorTypes[] = {MLDataDetectorTypeURL,MLDataDetectorTypePhoneNumber,MLDataDetectorTypeEmail,MLDataDetectorTypeUserHandle,MLDataDetectorTypeHashtag};
     NSArray *allRegexps = kAllRegexps();
@@ -247,7 +247,7 @@ static NSArray * kAllRegexps() {
 }
 
 //根据dataDetectorTypes和string获取其linkType
-- (MLLinkType)linkTypeOfString:(NSString*)string withDataDetectorTypes:(MLDataDetectorTypes)dataDetectorTypes
++ (MLLinkType)linkTypeOfString:(NSString*)string withDataDetectorTypes:(MLDataDetectorTypes)dataDetectorTypes
 {
     if (dataDetectorTypes == MLDataDetectorTypeNone) {
         return MLLinkTypeOther;
@@ -269,9 +269,51 @@ static NSArray * kAllRegexps() {
     return MLLinkTypeOther;
 }
 
-- (NSMutableArray*)linksWithString:(id)string
+- (void)setText:(id)text links:(NSArray *)links {
+    self.links = [links copy];
+    _activeLink = nil;
+    
+    if ([text isKindOfClass:[NSAttributedString class]]) {
+        [super setAttributedText:text];
+        return;
+    }
+    
+    [super setText:text];
+}
+
++ (void)batchLinksWithStrings:(NSArray*)strings dataDetectorTypes:(MLDataDetectorTypes)dataDetectorTypes dataDetectorTypesOfAttributedLinkValue:(MLDataDetectorTypes)dataDetectorTypesOfAttributedLinkValue beforeAddLinkBlock:(void(^)(MLLink *))beforeAddLinkBlock callback:(void(^)(NSArray *batchLinks))callback
 {
-    if (self.dataDetectorTypes == MLDataDetectorTypeNone||!string) {
+    NSMutableDictionary *results = [NSMutableDictionary dictionaryWithCapacity:strings.count];
+    
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_group_t group = dispatch_group_create();
+    for (id str in strings) {
+        dispatch_group_async(group, queue, ^{
+            NSMutableArray *links = [self linksWithString:str dataDetectorTypes:dataDetectorTypes dataDetectorTypesOfAttributedLinkValue:dataDetectorTypesOfAttributedLinkValue beforeAddLinkBlock:beforeAddLinkBlock];
+            
+            @synchronized(results){
+                results[str] = links;
+            }
+        });
+    }
+    
+    dispatch_group_notify(group, queue, ^{
+        //重新排列
+        NSMutableArray *resultArr = [NSMutableArray arrayWithCapacity:results.count];
+        for (id str in strings) {
+            [resultArr addObject:results[str]];
+        }
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (callback) {
+                callback(resultArr);
+            }
+        });
+    });
+}
+
++ (NSMutableArray*)linksWithString:(id)string dataDetectorTypes:(MLDataDetectorTypes)dataDetectorTypes dataDetectorTypesOfAttributedLinkValue:(MLDataDetectorTypes)dataDetectorTypesOfAttributedLinkValue beforeAddLinkBlock:(void(^)(MLLink *))beforeAddLinkBlock
+{
+    if (dataDetectorTypes == MLDataDetectorTypeNone||!string) {
         return nil;
     }
     
@@ -282,7 +324,7 @@ static NSArray * kAllRegexps() {
     
     NSMutableArray *links = [NSMutableArray array];
     
-    if ((self.dataDetectorTypes&MLDataDetectorTypeAttributedLink)&&[string isKindOfClass:[NSAttributedString class]]) {
+    if ((dataDetectorTypes&MLDataDetectorTypeAttributedLink)&&[string isKindOfClass:[NSAttributedString class]]) {
         NSAttributedString *attributedString = ((NSAttributedString*)string);
         [attributedString enumerateAttribute:NSLinkAttributeName inRange:NSMakeRange(0, attributedString.length) options:0 usingBlock:^(id value, NSRange range, BOOL *stop) {
             if (value) {
@@ -298,9 +340,9 @@ static NSArray * kAllRegexps() {
                 NSAssert(linkValue, @"The value of NSLinkAttributeName should be NSString/NSAttributedString/NSURL!");
                 
                 if (linkValue.length>0) {
-                    MLLink *link = [MLLink linkWithType:[self linkTypeOfString:linkValue withDataDetectorTypes:self.dataDetectorTypesOfAttributedLinkValue] value:linkValue range:range];
-                    if (self.beforeAddLinkBlock) {
-                        self.beforeAddLinkBlock(link);
+                    MLLink *link = [MLLink linkWithType:[self linkTypeOfString:linkValue withDataDetectorTypes:dataDetectorTypesOfAttributedLinkValue] value:linkValue range:range];
+                    if (beforeAddLinkBlock) {
+                        beforeAddLinkBlock(link);
                     }
                     [links addObject:link];
                 }
@@ -309,7 +351,7 @@ static NSArray * kAllRegexps() {
     }
     
     NSArray *allRegexps = kAllRegexps();
-    NSArray *regexps = [self regexpsWithDataDetectorTypes:self.dataDetectorTypes];
+    NSArray *regexps = [[self class] regexpsWithDataDetectorTypes:dataDetectorTypes];
     NSRange textRange = NSMakeRange(0, plainText.length);
     for (NSRegularExpression *regexp in regexps) {
         [regexp enumerateMatchesInString:plainText options:0 range:textRange usingBlock:^(NSTextCheckingResult *result, __unused NSMatchingFlags flags, __unused BOOL *stop) {
@@ -325,8 +367,8 @@ static NSArray * kAllRegexps() {
             
             if (linkType!=MLLinkTypeNone) {
                 MLLink *link = [MLLink linkWithType:linkType value:[plainText substringWithRange:result.range] range:result.range];
-                if (self.beforeAddLinkBlock) {
-                    self.beforeAddLinkBlock(link);
+                if (beforeAddLinkBlock) {
+                    beforeAddLinkBlock(link);
                 }
                 [links addObject:link];
             }
@@ -334,7 +376,6 @@ static NSArray * kAllRegexps() {
     }
     
     return links.count>0?links:nil;
-    
 }
 
 #pragma mark - 链接点击交互相关

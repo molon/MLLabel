@@ -110,6 +110,18 @@ typedef NS_ENUM(NSUInteger, MLLinkType) {
  */
 - (void)invalidateDisplayForLinks;
 
+/*!
+ 设置text，并且直接给予links的方法，此方法内部并不会去做正则匹配拿取text对应links的操作，所以MLLinkLabel的一些属性会被忽略。
+ 此方法需要配合batchLinksWithStrings:dataDetectorTypes:dataDetectorTypesOfAttributedLinkValue:beforeAddLinkBlock:callback:使用
+ */
+- (void)setText:(id)text links:(NSArray*)links;
+
+/*!
+ 异步批量获取links，result是个二维数组，这玩意一般配合
+ 此方法需要配合setText:links:使用
+ */
++ (void)batchLinksWithStrings:(NSArray*)strings dataDetectorTypes:(MLDataDetectorTypes)dataDetectorTypes dataDetectorTypesOfAttributedLinkValue:(MLDataDetectorTypes)dataDetectorTypesOfAttributedLinkValue beforeAddLinkBlock:(void(^)(MLLink *))beforeAddLinkBlock callback:(void(^)(NSArray *batchLinks))callback;
+
 @end
 
 @interface MLLink : NSObject
